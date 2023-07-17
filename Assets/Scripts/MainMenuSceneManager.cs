@@ -19,6 +19,7 @@ public class MainMenuSceneManager : MonoBehaviour
     {
         GlobalConfigManager.IsServer = true;
         //in local testing, simulate getting allocation payloads to get number of players, etc.
+        //https://docs.unity.com/game-server-hosting/manual/concepts/allocations-payload
         int numberOfPlayersLocalServerConfig = int.Parse(_numberOfPlayersDropDown.options[_numberOfPlayersDropDown.value].text);
         GlobalConfigManager.LocalServerAllocationPayload = new LocalServerAllocationPayload(numberOfPlayersLocalServerConfig);
         SceneManager.LoadScene("Gameplay");
