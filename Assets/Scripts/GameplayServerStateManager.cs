@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 public class GameplayServerStateManager : MonoBehaviour
 {
+    [SerializeField] private Transform[] _playerPositionTransforms;
+
     private NetworkManager _networkManager;
     private UnityTransport _transport;
     private HashSet<ulong> _connectedClientIds = new HashSet<ulong>();
@@ -33,12 +35,12 @@ public class GameplayServerStateManager : MonoBehaviour
         //TODO var connectionData = request.Payload;
         if(_connectedClientIds.Count < GlobalServerConfigManager.LocalServerAllocationPayload.numberOfPlayers)
         {
-            response.Approved = true;
+            _connectedClientIds.Add(clientId);
             response.CreatePlayerObject = true;
             response.PlayerPrefabHash = null;
-            response.Position = Vector3.zero;
+            response.Position = _playerPositionTransforms[_connectedClientIds.Count - 1].position;
             response.Rotation = Quaternion.identity;
-            _connectedClientIds.Add(clientId);
+            response.Approved = true;
         }
         else
         {
