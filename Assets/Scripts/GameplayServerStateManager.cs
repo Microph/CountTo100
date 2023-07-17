@@ -2,14 +2,24 @@ using Unity.Netcode.Transports.UTP;
 using Unity.Netcode;
 using UnityEngine;
 using System.Collections.Generic;
+using CountTo100.Utilities;
+using System;
+using UnityEditor.PackageManager;
 
-public class GameplayServerStateManager : MonoBehaviour
+public class GameplayServerStateManager : NetworkBehaviour
 {
+    public NetworkVariable<Enums.GameplayServerState> CurrentGameplayServerState = new NetworkVariable<Enums.GameplayServerState>(k_defaultGameplayServerState);
+    public NetworkVariable<int> CurrentScore = new NetworkVariable<int>(k_defaultScore);
+    
+    [SerializeField] private Player _playerPrefab;
     [SerializeField] private Transform[] _playerPositionTransforms;
+
+    private const Enums.GameplayServerState k_defaultGameplayServerState = Enums.GameplayServerState.Standby;
+    private const int k_defaultScore = 0;
 
     private NetworkManager _networkManager;
     private UnityTransport _transport;
-    private HashSet<ulong> _connectedClientIds = new HashSet<ulong>();
+    private Dictionary<ulong, PlayerData> _connectedPlayerDataDict = new Dictionary<ulong, PlayerData>();
 
     public void InitializeAndStartServer()
     {
@@ -24,22 +34,37 @@ public class GameplayServerStateManager : MonoBehaviour
         _transport = _networkManager.GetComponent<UnityTransport>();
         Debug.Assert(_transport != null);
         _networkManager.ConnectionApprovalCallback = ConnectionApprovalCheck;
+        _networkManager.OnClientConnectedCallback += OnClientConnected;
         _networkManager.OnClientDisconnectCallback += OnClientDisconnected;
         _transport.SetConnectionData("127.0.0.1", 7777); //TODO: not hardcoded
         _networkManager.StartServer();
     }
 
+    [ServerRpc]
+    public void TestAddCurrentScoreServerRpc()
+    {
+        CurrentScore.Value ++;
+    }
+
+    [ServerRpc]
+    public void OnPlayerCountServerRpc(ulong clientId)
+    {
+        //TODO also check 5 times/sec
+        if (CurrentGameplayServerState.Value != Enums.GameplayServerState.AllowCounting)
+        {
+            return;
+        }
+
+        CurrentScore.Value ++;
+    }
+
     private void ConnectionApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
     {
         var clientId = request.ClientNetworkId;
-        //TODO var connectionData = request.Payload;
-        if(_connectedClientIds.Count < GlobalServerConfigManager.LocalServerAllocationPayload.numberOfPlayers)
+        //TODO get player name from var connectionData = request.Payload;
+        if(_connectedPlayerDataDict.Count < GlobalServerConfigManager.LocalServerAllocationPayload.numberOfPlayers)
         {
-            _connectedClientIds.Add(clientId);
-            response.CreatePlayerObject = true;
-            response.PlayerPrefabHash = null;
-            response.Position = _playerPositionTransforms[_connectedClientIds.Count - 1].position;
-            response.Rotation = Quaternion.identity;
+            _connectedPlayerDataDict.Add(clientId, new PlayerData(clientId, "test"));
             response.Approved = true;
         }
         else
@@ -49,9 +74,22 @@ public class GameplayServerStateManager : MonoBehaviour
         }
     }
 
+    private void OnClientConnected(ulong clientId)
+    {
+        SpawnPlayer(clientId, _connectedPlayerDataDict[clientId].PlayerName, _playerPositionTransforms[_connectedPlayerDataDict.Count - 1].position);
+    }
+
+    private void SpawnPlayer(ulong clientId, string playerName, Vector3 position)
+    {
+        var newPlayer = Instantiate(original: _playerPrefab, position: position, rotation: Quaternion.identity);
+        newPlayer.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
+        newPlayer.Setup(clientId, playerName);
+        newPlayer.SetupClientRpc(clientId, playerName);
+    }
+
     private void OnClientDisconnected(ulong clientId)
     {
-        _connectedClientIds.Remove(clientId);
+        _connectedPlayerDataDict.Remove(clientId);
         Debug.Log($"Disconnected client ID: {clientId}");
         Debug.Log($"Disconnect reason: {_networkManager.DisconnectReason}");
     }

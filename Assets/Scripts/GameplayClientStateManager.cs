@@ -3,7 +3,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameplayClientStateManager : MonoBehaviour
+public class GameplayClientStateManager : NetworkBehaviour
 {
     private NetworkManager _networkManager;
     private UnityTransport _transport;

@@ -1,16 +1,18 @@
+using CountTo100.Utilities;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class MainMenuSceneManager : MonoBehaviour
+public class MainMenuSceneManager : MonoSingleton<MainMenuSceneManager>
 {
     [SerializeField] private Button _startAsServerButton;
     [SerializeField] private Button _startAsClientButton;
     [SerializeField] private TMP_Dropdown _numberOfPlayersDropDown;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         _startAsServerButton.onClick.AddListener(OnStartAsServerButtonClicked);
         _startAsClientButton.onClick.AddListener(OnStartAsClientButtonClicked);
     }

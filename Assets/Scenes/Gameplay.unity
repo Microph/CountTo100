@@ -568,9 +568,10 @@ MonoBehaviour:
   NetworkConfig:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 743291901}
-    PlayerPrefab: {fileID: 5010697005090059901, guid: 8951a06787bd2174ebe31458271d1fbf, type: 3}
+    PlayerPrefab: {fileID: 0}
     Prefabs:
-      NetworkPrefabsLists: []
+      NetworkPrefabsLists:
+      - {fileID: 11400000, guid: c20494a75b899ee42b340d30cca6726b, type: 2}
     TickRate: 30
     ClientConnectionBufferTimeout: 10
     ConnectionApproval: 1
@@ -814,6 +815,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _gameplayServerStateManager: {fileID: 1816174491}
   _gameplayClientStateManager: {fileID: 974469691}
+  _currentGameplayScoreText: {fileID: 2120644309}
 --- !u!4 &1107031203
 Transform:
   m_ObjectHideFlags: 0
@@ -972,6 +974,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1816174492}
   - component: {fileID: 1816174491}
+  - component: {fileID: 1816174493}
   m_Layer: 0
   m_Name: GameplayServerStateManager
   m_TagString: Untagged
@@ -991,6 +994,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1defe9f41f2267a45b1374ccb3712c44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CurrentGameplayServerState:
+    m_InternalValue: 0
+  CurrentScore:
+    m_InternalValue: 0
+  _playerPrefab: {fileID: 2069390569981613517, guid: 8951a06787bd2174ebe31458271d1fbf, type: 3}
   _playerPositionTransforms:
   - {fileID: 579763580}
   - {fileID: 1353217727}
@@ -1010,6 +1018,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1816174493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1816174490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 1493659008
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &2120644307
 GameObject:
   m_ObjectHideFlags: 0
