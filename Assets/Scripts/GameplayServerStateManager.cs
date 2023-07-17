@@ -3,8 +3,6 @@ using Unity.Netcode;
 using UnityEngine;
 using System.Collections.Generic;
 using CountTo100.Utilities;
-using System;
-using UnityEditor.PackageManager;
 
 public class GameplayServerStateManager : NetworkBehaviour
 {
@@ -61,10 +59,9 @@ public class GameplayServerStateManager : NetworkBehaviour
     private void ConnectionApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
     {
         var clientId = request.ClientNetworkId;
-        //TODO get player name from var connectionData = request.Payload;
         if(_connectedPlayerDataDict.Count < GlobalServerConfigManager.LocalServerAllocationPayload.numberOfPlayers)
         {
-            _connectedPlayerDataDict.Add(clientId, new PlayerData(clientId, "test"));
+            _connectedPlayerDataDict.Add(clientId, new PlayerData(clientId, System.Text.Encoding.ASCII.GetString(request.Payload)));
             response.Approved = true;
         }
         else

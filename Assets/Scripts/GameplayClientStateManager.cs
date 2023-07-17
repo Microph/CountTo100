@@ -22,6 +22,7 @@ public class GameplayClientStateManager : NetworkBehaviour
         Debug.Assert(_transport != null);
         _networkManager.OnClientDisconnectCallback += OnClientDisconnected;
         _transport.SetConnectionData("127.0.0.1", 7777); //TODO: not hardcoded
+        _networkManager.NetworkConfig.ConnectionData = System.Text.Encoding.ASCII.GetBytes("TestPlayerName"); //TODO: get from text input
         _networkManager.StartClient();
     }
 
