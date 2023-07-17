@@ -38,13 +38,13 @@ public class GameplayServerStateManager : NetworkBehaviour
         _networkManager.StartServer();
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void TestAddCurrentScoreServerRpc()
     {
         CurrentScore.Value ++;
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void OnPlayerCountServerRpc(ulong clientId)
     {
         //TODO also check 5 times/sec

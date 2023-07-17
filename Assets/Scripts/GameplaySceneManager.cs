@@ -11,9 +11,11 @@ public class GameplaySceneManager : MonoSingleton<GameplaySceneManager>
 {
     public GameplayServerStateManager GameplayServerStateManager => _gameplayServerStateManager;
     public GameplayClientStateManager GameplayClientStateManager => _gameplayClientStateManager;
+    public InputManager InputManager => _inputManager;
 
     [SerializeField] private GameplayServerStateManager _gameplayServerStateManager;
     [SerializeField] private GameplayClientStateManager _gameplayClientStateManager;
+    [SerializeField] private InputManager _inputManager;
     [SerializeField] private TMP_Text _currentGameplayScoreText;
 
     protected override void Awake()

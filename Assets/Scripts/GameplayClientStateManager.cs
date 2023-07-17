@@ -2,6 +2,7 @@
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System;
 
 public class GameplayClientStateManager : NetworkBehaviour
 {
@@ -21,9 +22,20 @@ public class GameplayClientStateManager : NetworkBehaviour
         _transport = _networkManager.GetComponent<UnityTransport>();
         Debug.Assert(_transport != null);
         _networkManager.OnClientDisconnectCallback += OnClientDisconnected;
+        InitializeGameplayInputEvents();
         _transport.SetConnectionData("127.0.0.1", 7777); //TODO: not hardcoded
         _networkManager.NetworkConfig.ConnectionData = System.Text.Encoding.ASCII.GetBytes("TestPlayerName"); //TODO: get from text input
         _networkManager.StartClient();
+    }
+
+    private void InitializeGameplayInputEvents()
+    {
+        GameplaySceneManager.Instance.InputManager.MainInputAction = MainInputAction;
+    }
+
+    private void MainInputAction()
+    {
+        GameplaySceneManager.Instance.GameplayServerStateManager.TestAddCurrentScoreServerRpc();
     }
 
     private void OnClientDisconnected(ulong clientId)
