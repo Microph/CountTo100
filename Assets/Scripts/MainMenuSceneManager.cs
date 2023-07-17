@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -6,6 +7,7 @@ public class MainMenuSceneManager : MonoBehaviour
 {
     [SerializeField] private Button _startAsServerButton;
     [SerializeField] private Button _startAsClientButton;
+    [SerializeField] private TMP_Dropdown _numberOfPlayersDropDown;
 
     private void Awake()
     {
@@ -16,6 +18,9 @@ public class MainMenuSceneManager : MonoBehaviour
     private void OnStartAsServerButtonClicked()
     {
         GlobalConfigManager.IsServer = true;
+        //in local testing, simulate getting allocation payloads to get number of players, etc.
+        int numberOfPlayersLocalServerConfig = int.Parse(_numberOfPlayersDropDown.options[_numberOfPlayersDropDown.value].text);
+        GlobalConfigManager.LocalServerAllocationPayload = new LocalServerAllocationPayload(numberOfPlayersLocalServerConfig);
         SceneManager.LoadScene("Gameplay");
     }
 
