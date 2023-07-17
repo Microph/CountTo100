@@ -17,17 +17,17 @@ public class MainMenuSceneManager : MonoBehaviour
 
     private void OnStartAsServerButtonClicked()
     {
-        GlobalConfigManager.IsServer = true;
+        GlobalServerConfigManager.IsServer = true;
         //in local testing, simulate getting allocation payloads to get number of players, etc.
         //https://docs.unity.com/game-server-hosting/manual/concepts/allocations-payload
         int numberOfPlayersLocalServerConfig = int.Parse(_numberOfPlayersDropDown.options[_numberOfPlayersDropDown.value].text);
-        GlobalConfigManager.LocalServerAllocationPayload = new LocalServerAllocationPayload(numberOfPlayersLocalServerConfig);
+        GlobalServerConfigManager.LocalServerAllocationPayload = new LocalServerAllocationPayload(numberOfPlayersLocalServerConfig);
         SceneManager.LoadScene("Gameplay");
     }
 
     private void OnStartAsClientButtonClicked()
     {
-        GlobalConfigManager.IsServer = false;
+        GlobalServerConfigManager.IsServer = false;
         //TODO: To player naming and quick joining flow first
         SceneManager.LoadScene("Gameplay");
     }

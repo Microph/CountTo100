@@ -7,33 +7,18 @@ using UnityEngine;
 
 public class GameplaySceneManager : MonoBehaviour
 {
-    private NetworkManager _networkManager;
-    private UnityTransport _transport;
-
-    private void Awake()
-    {
-        _networkManager = NetworkManager.Singleton;
-        Debug.Assert(_networkManager != null);
-        _transport = _networkManager.GetComponent<UnityTransport>();
-        Debug.Assert(_transport != null);
-    }
+    [SerializeField] private GameplayServerStateManager _gameplayServerStateManager;
+    [SerializeField] private GameplayClientStateManager _gameplayClientStateManager;
 
     private void Start()
     {
-        if(GlobalConfigManager.IsServer)
+        if(GlobalServerConfigManager.IsServer)
         {
-            SetupConnectionData();
-            _networkManager.StartServer();
+            _gameplayServerStateManager.InitializeAndStartServer();
         }
         else
         {
-            SetupConnectionData();
-            _networkManager.StartClient();
+            _gameplayClientStateManager.InitializeAndStartClient();
         }
-    }
-
-    private void SetupConnectionData()
-    {
-        _transport.SetConnectionData("127.0.0.1", 7777); //TODO: not hardcoded
     }
 }
