@@ -1,4 +1,5 @@
 using CountTo100.Utilities;
+using System;
 using System.Collections.Generic;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
@@ -28,9 +29,15 @@ public class GameplayClientStartClientState : State
     public override void OnEnter()
     {
         _networkManager.OnClientDisconnectCallback += OnClientDisconnected;
+        _networkManager.OnClientConnectedCallback += OnClientConnected;
         _transport.SetConnectionData("127.0.0.1", 7777); //TODO: not hardcoded
         _networkManager.NetworkConfig.ConnectionData = System.Text.Encoding.ASCII.GetBytes("TestPlayerName"); //TODO: get from text input
         _networkManager.StartClient();
+    }
+
+    private void OnClientConnected(ulong clientId)
+    {
+        //TODO: Send player ready signal server rpc
     }
 
     private void OnClientDisconnected(ulong clientId)
