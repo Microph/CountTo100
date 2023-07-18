@@ -12,7 +12,7 @@ public class GameplayServerStartServerState : State
     private Transform[] _playerPositionTransforms;
 
     public GameplayServerStartServerState(
-        NetworkStateManager stateManager,
+        IStateManageable stateManager,
         NetworkManager networkManager,
         int targetNumberOfPlayers,
         Dictionary<ulong, PlayerData> connectedPlayerDataDict,

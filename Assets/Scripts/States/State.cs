@@ -6,9 +6,9 @@ public abstract class State
     public readonly Enums.State StateEnum;
     public readonly Dictionary<(Enums.State, Enums.State), StateTransition> AvailableStateTransitions;
 
-    protected readonly NetworkStateManager _stateManager;
+    protected readonly IStateManageable _stateManager;
 
-    protected State(Enums.State stateEnum, NetworkStateManager stateManager, IEnumerable<StateTransition> availableStateTransitions)
+    protected State(Enums.State stateEnum, IStateManageable stateManager, IEnumerable<StateTransition> availableStateTransitions)
     {
         StateEnum = stateEnum;
         _stateManager = stateManager;

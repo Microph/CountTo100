@@ -12,7 +12,7 @@ public class GameplayClientStartClientState : State
     private UnityTransport _transport;
 
     public GameplayClientStartClientState(
-        NetworkStateManager stateManager,
+        IStateManageable stateManager,
         NetworkManager networkManager, 
         UnityTransport transport
     )

@@ -2,7 +2,7 @@ using CountTo100.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 
-public abstract class NetworkStateManager : NetworkBehaviour //TODO: IStateManageable -> SetState & TransitTo
+public abstract class NetworkStateManager : NetworkBehaviour, IStateManageable
 {
     public NetworkVariable<Enums.State> NVCurrentStateEnum = new NetworkVariable<Enums.State>(k_defaultState);
     public Enums.State CurrentStateEnum => _currentState.StateEnum;
