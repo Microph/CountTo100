@@ -2,7 +2,7 @@ using CountTo100.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 
-public abstract class NetworkStateManager : NetworkBehaviour
+public abstract class NetworkStateManager : NetworkBehaviour //TODO: IStateManageable -> SetState & TransitTo
 {
     public NetworkVariable<Enums.State> NVCurrentStateEnum = new NetworkVariable<Enums.State>(k_defaultState);
     public Enums.State CurrentStateEnum => _currentState.StateEnum;
@@ -13,6 +13,11 @@ public abstract class NetworkStateManager : NetworkBehaviour
 
     public virtual void SetState(State state)
     {
+        if (!IsSpawned)
+        {
+            Debug.LogError("Object is not spawned");
+            return;
+        }
         _currentState = state;
         NVCurrentStateEnum.Value = CurrentStateEnum;
         _currentState.OnEnter();
@@ -20,7 +25,12 @@ public abstract class NetworkStateManager : NetworkBehaviour
 
     public virtual void TransitTo(State newState)
     {
-        if(!_currentState.AvailableStateTransitions.ContainsKey((CurrentStateEnum, newState.StateEnum)))
+        if (!IsSpawned)
+        {
+            Debug.LogError("Object is not spawned");
+            return;
+        }
+        else if (!_currentState.AvailableStateTransitions.ContainsKey((CurrentStateEnum, newState.StateEnum)))
         {
             Debug.LogError($"Invalid state transition from {CurrentStateEnum} to {newState.StateEnum}");
             return;

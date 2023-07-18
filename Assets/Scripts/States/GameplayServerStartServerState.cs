@@ -1,26 +1,27 @@
 using CountTo100.Utilities;
 using System.Collections.Generic;
 using Unity.Netcode;
-using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 
 public class GameplayServerStartServerState : State
 {
     private NetworkManager _networkManager;
-    private UnityTransport _transport;
+    private int _targetNumberOfPlayers;
     private Dictionary<ulong, PlayerData> _connectedPlayerDataDict;
     private Player _playerPrefab;
     private Transform[] _playerPositionTransforms;
 
     public GameplayServerStartServerState(
-        NetworkManager networkManager, 
-        UnityTransport transport, 
+        NetworkStateManager stateManager,
+        NetworkManager networkManager,
+        int targetNumberOfPlayers,
         Dictionary<ulong, PlayerData> connectedPlayerDataDict,
         Player playerPrefab,
         Transform[] playerPositionTransforms
     )
         : base(
             stateEnum: Enums.State.GameplayServer_StartServer,
+            stateManager: stateManager,
             availableStateTransitions: new StateTransition[]
             {
                 new BeginGameplayCountDownStateTransition()
@@ -28,7 +29,7 @@ public class GameplayServerStartServerState : State
         )
     {
         _networkManager = networkManager;
-        _transport = transport;
+        _targetNumberOfPlayers = targetNumberOfPlayers;
         _connectedPlayerDataDict = connectedPlayerDataDict;
         _playerPrefab = playerPrefab;
         _playerPositionTransforms = playerPositionTransforms;
@@ -44,32 +45,17 @@ public class GameplayServerStartServerState : State
 
     public override void OnEnter()
     {
-        _networkManager.ConnectionApprovalCallback = ConnectionApprovalCheck;
         _networkManager.OnClientConnectedCallback += OnClientConnected;
         _networkManager.OnClientDisconnectCallback += OnClientDisconnected;
-        _transport.SetConnectionData("127.0.0.1", 7777); //TODO: not hardcoded
-        _networkManager.StartServer();
-    }
-
-    private void ConnectionApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
-    {
-        var clientId = request.ClientNetworkId;
-        if (_connectedPlayerDataDict.Count < GlobalServerConfigManager.LocalServerAllocationPayload.numberOfPlayers)
-        {
-            _connectedPlayerDataDict.Add(clientId, new PlayerData(clientId, System.Text.Encoding.ASCII.GetString(request.Payload)));
-            response.Approved = true;
-        }
-        else
-        {
-            response.Approved = false;
-            response.Reason = "Reached maximum number of players";
-        }
     }
 
     private void OnClientConnected(ulong clientId)
     {
         SpawnPlayer(clientId, _connectedPlayerDataDict[clientId].PlayerName, _playerPositionTransforms[_connectedPlayerDataDict.Count - 1].position);
-        //TODO: if all players are spawned, goto start countdown state    
+        if(_connectedPlayerDataDict.Count == _targetNumberOfPlayers)
+        {
+            _stateManager.TransitTo(new GameplayServerBeginGameplayCountDownState(_stateManager));
+        }
     }
 
     private void OnClientDisconnected(ulong clientId)

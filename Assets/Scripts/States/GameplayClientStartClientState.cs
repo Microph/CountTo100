@@ -12,11 +12,13 @@ public class GameplayClientStartClientState : State
     private UnityTransport _transport;
 
     public GameplayClientStartClientState(
+        NetworkStateManager stateManager,
         NetworkManager networkManager, 
         UnityTransport transport
     )
         : base(
             stateEnum: Enums.State.GameplayClient_StartClient,
+            stateManager: stateManager,
             availableStateTransitions: new StateTransition[]
             {
             }
@@ -28,15 +30,5 @@ public class GameplayClientStartClientState : State
 
     public override void OnEnter()
     {
-        _networkManager.OnClientDisconnectCallback += OnClientDisconnected;
-        _transport.SetConnectionData("127.0.0.1", 7777); //TODO: not hardcoded
-        _networkManager.NetworkConfig.ConnectionData = System.Text.Encoding.ASCII.GetBytes("TestPlayerName"); //TODO: get from text input
-        _networkManager.StartClient();
-    }
-
-    private void OnClientDisconnected(ulong clientId)
-    {
-        Debug.Log($"Disconnect reason: {_networkManager.DisconnectReason}");
-        SceneManager.LoadScene("MainMenu");
     }
 }

@@ -3,7 +3,7 @@ using Unity.Netcode;
 using UnityEngine;
 using System.Collections.Generic;
 using CountTo100.Utilities;
-using System;
+using System.Threading.Tasks;
 
 public class GameplayServerStateManager : NetworkStateManager
 {
@@ -16,9 +16,10 @@ public class GameplayServerStateManager : NetworkStateManager
 
     private NetworkManager _networkManager;
     private UnityTransport _transport;
+    private int _targetNumberOfPlayers;
     private Dictionary<ulong, PlayerData> _connectedPlayerDataDict = new Dictionary<ulong, PlayerData>();
 
-    public void InitializeAndStart()
+    public async Task InitializeAndStart()
     {
         if(!GlobalServerConfigManager.IsServer)
         {
@@ -30,9 +31,16 @@ public class GameplayServerStateManager : NetworkStateManager
         Debug.Assert(_networkManager != null);
         _transport = _networkManager.GetComponent<UnityTransport>();
         Debug.Assert(_transport != null);
+        _targetNumberOfPlayers = GlobalServerConfigManager.LocalServerAllocationPayload.numberOfPlayers;
+        _networkManager.ConnectionApprovalCallback = ConnectionApprovalCheck;
+        _transport.SetConnectionData("127.0.0.1", 7777); //TODO: not hardcoded
+        _networkManager.StartServer();
+        await TaskHelper.When(() => IsSpawned);
+        Debug.Log("Server object spawned!");
         SetState(new GameplayServerStartServerState(
+                stateManager: this,
                 networkManager: _networkManager,
-                transport: _transport,
+                targetNumberOfPlayers: _targetNumberOfPlayers,
                 connectedPlayerDataDict: _connectedPlayerDataDict,
                 playerPrefab: _playerPrefab,
                 playerPositionTransforms: _playerPositionTransforms
@@ -56,5 +64,20 @@ public class GameplayServerStateManager : NetworkStateManager
         }
 
         NVCurrentScore.Value ++;
+    }
+
+    private void ConnectionApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
+    {
+        var clientId = request.ClientNetworkId;
+        if (_connectedPlayerDataDict.Count < _targetNumberOfPlayers)
+        {
+            _connectedPlayerDataDict.Add(clientId, new PlayerData(clientId, System.Text.Encoding.ASCII.GetString(request.Payload)));
+            response.Approved = true;
+        }
+        else
+        {
+            response.Approved = false;
+            response.Reason = "Reached maximum number of players";
+        }
     }
 }

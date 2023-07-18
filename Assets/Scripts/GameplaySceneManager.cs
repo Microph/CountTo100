@@ -25,15 +25,22 @@ public class GameplaySceneManager : MonoSingleton<GameplaySceneManager>
         _gameplayServerStateManager.NVCurrentScore.OnValueChanged += OnCurrentScoreValueChanged;
     }
 
-    private void Start()
+    private async void Start()
     {
-        if (GlobalServerConfigManager.IsServer)
+        try
         {
-            _gameplayServerStateManager.InitializeAndStart();
+            if (GlobalServerConfigManager.IsServer)
+            {
+                await _gameplayServerStateManager.InitializeAndStart();
+            }
+            else
+            {
+                await _gameplayClientStateManager.InitializeAndStart();
+            }
         }
-        else
+        catch (Exception ex)
         {
-            _gameplayClientStateManager.InitializeAndStart();
+            Debug.LogException(ex);
         }
     }
 

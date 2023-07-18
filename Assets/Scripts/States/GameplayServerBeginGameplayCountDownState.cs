@@ -2,9 +2,10 @@ using CountTo100.Utilities;
 
 public class GameplayServerBeginGameplayCountDownState : State
 {
-    public GameplayServerBeginGameplayCountDownState()
+    public GameplayServerBeginGameplayCountDownState(NetworkStateManager stateManager)
         : base(
-            stateEnum: Enums.State.GameplayServer_BeginGameplayCountDown, 
+            stateEnum: Enums.State.GameplayServer_BeginGameplayCountDown,
+            stateManager: stateManager,
             availableStateTransitions: new StateTransition[]
             {
                 new AllowCountingStateTransition()
