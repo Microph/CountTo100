@@ -37,7 +37,7 @@ public class GameplayServerStateManager : NetworkStateManager
         _networkManager.StartServer();
         await TaskHelper.When(() => IsSpawned);
         Debug.Log("Server object spawned!");
-        SetState(new GameplayServerStartServerState(
+        SetState(new GameplayServerServerStartedState(
                 stateManager: this,
                 networkManager: _networkManager,
                 targetNumberOfPlayers: _targetNumberOfPlayers,

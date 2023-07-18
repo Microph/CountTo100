@@ -28,7 +28,7 @@ public class GameplayClientStateManager : NetworkStateManager
         _networkManager.StartClient();
         await TaskHelper.When(() => IsSpawned);
         Debug.Log("Client object spawned!");
-        SetState(new GameplayClientStartClientState(
+        SetState(new GameplayClientClientStartedState(
                 stateManager: this,
                 networkManager: _networkManager,
                 transport: _transport

@@ -6,12 +6,12 @@ namespace CountTo100.Utilities
         {
             None,
             //Server
-            GameplayServer_StartServer,
+            GameplayServer_ServerStarted,
             GameplayServer_BeginGameplayCountDown,
             GameplayServer_AllowCounting,
             GameplayServer_GameOver,
             //Client
-            GameplayClient_StartClient,
+            GameplayClient_ClientStarted,
         }
     }
 }

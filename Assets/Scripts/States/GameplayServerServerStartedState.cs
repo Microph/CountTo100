@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class GameplayServerStartServerState : State
+public class GameplayServerServerStartedState : State
 {
     private NetworkManager _networkManager;
     private int _targetNumberOfPlayers;
@@ -11,7 +11,7 @@ public class GameplayServerStartServerState : State
     private Player _playerPrefab;
     private Transform[] _playerPositionTransforms;
 
-    public GameplayServerStartServerState(
+    public GameplayServerServerStartedState(
         IStateManageable stateManager,
         NetworkManager networkManager,
         int targetNumberOfPlayers,
@@ -20,7 +20,7 @@ public class GameplayServerStartServerState : State
         Transform[] playerPositionTransforms
     )
         : base(
-            stateEnum: Enums.State.GameplayServer_StartServer,
+            stateEnum: Enums.State.GameplayServer_ServerStarted,
             stateManager: stateManager,
             availableStateTransitions: new StateTransition[]
             {
@@ -38,7 +38,7 @@ public class GameplayServerStartServerState : State
     public class BeginGameplayCountDownStateTransition : StateTransition
     {
         public BeginGameplayCountDownStateTransition()
-            : base(Enums.State.GameplayServer_StartServer, Enums.State.GameplayServer_BeginGameplayCountDown)
+            : base(Enums.State.GameplayServer_ServerStarted, Enums.State.GameplayServer_BeginGameplayCountDown)
         {
         }
     }

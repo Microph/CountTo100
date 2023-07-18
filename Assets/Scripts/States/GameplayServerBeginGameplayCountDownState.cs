@@ -21,4 +21,11 @@ public class GameplayServerBeginGameplayCountDownState : State
         {
         }
     }
+
+    public override void OnEnter()
+    {
+        //TODO
+        //Show 3 2 1 countdown animation
+        //then, transition to allow player input state
+    }
 }

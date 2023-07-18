@@ -6,18 +6,18 @@ using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameplayClientStartClientState : State
+public class GameplayClientClientStartedState : State
 {
     private NetworkManager _networkManager;
     private UnityTransport _transport;
 
-    public GameplayClientStartClientState(
+    public GameplayClientClientStartedState(
         IStateManageable stateManager,
         NetworkManager networkManager, 
         UnityTransport transport
     )
         : base(
-            stateEnum: Enums.State.GameplayClient_StartClient,
+            stateEnum: Enums.State.GameplayClient_ClientStarted,
             stateManager: stateManager,
             availableStateTransitions: new StateTransition[]
             {
@@ -30,5 +30,6 @@ public class GameplayClientStartClientState : State
 
     public override void OnEnter()
     {
+        //TODO: Wait until server countdown finished -> to play state
     }
 }
