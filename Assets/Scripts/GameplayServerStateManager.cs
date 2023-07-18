@@ -3,6 +3,7 @@ using Unity.Netcode;
 using UnityEngine;
 using System.Collections.Generic;
 using CountTo100.Utilities;
+using System;
 
 public class GameplayServerStateManager : NetworkStateManager
 {
@@ -29,7 +30,7 @@ public class GameplayServerStateManager : NetworkStateManager
         Debug.Assert(_networkManager != null);
         _transport = _networkManager.GetComponent<UnityTransport>();
         Debug.Assert(_transport != null);
-        BeginFirstState(new GameplayServerStartServerState(
+        SetState(new GameplayServerStartServerState(
                 networkManager: _networkManager,
                 transport: _transport,
                 connectedPlayerDataDict: _connectedPlayerDataDict,
@@ -37,6 +38,13 @@ public class GameplayServerStateManager : NetworkStateManager
                 playerPositionTransforms: _playerPositionTransforms
             )
         );
+    }
+
+    [ServerRpc]
+    public void PlayerReadySignal(ulong clientId)
+    {
+        //TODO: BeginGameplayCountDownStateTransition if all clients are connected and signaled ready
+        throw new NotImplementedException();
     }
 
     [ServerRpc(RequireOwnership = false)]

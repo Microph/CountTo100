@@ -11,9 +11,10 @@ public abstract class NetworkStateManager : NetworkBehaviour
 
     private State _currentState = null;
 
-    public virtual void BeginFirstState(State state)
+    public virtual void SetState(State state)
     {
         _currentState = state;
+        NVCurrentStateEnum.Value = CurrentStateEnum;
         _currentState.OnEnter();
     }
 
@@ -27,9 +28,7 @@ public abstract class NetworkStateManager : NetworkBehaviour
 
         _currentState.OnExit();
         _currentState.AvailableStateTransitions[(CurrentStateEnum, newState.StateEnum)].OnTransit();
-        _currentState = newState;
-        NVCurrentStateEnum.Value = CurrentStateEnum;
-        _currentState.OnEnter();
+        SetState(newState);
     }
 
     protected virtual void Update()

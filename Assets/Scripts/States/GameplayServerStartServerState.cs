@@ -69,7 +69,6 @@ public class GameplayServerStartServerState : State
     private void OnClientConnected(ulong clientId)
     {
         SpawnPlayer(clientId, _connectedPlayerDataDict[clientId].PlayerName, _playerPositionTransforms[_connectedPlayerDataDict.Count - 1].position);
-        //TODO: BeginGameplayCountDownStateTransition if all clients are connected and signaled ready
     }
 
     private void OnClientDisconnected(ulong clientId)
