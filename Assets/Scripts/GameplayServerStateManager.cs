@@ -41,7 +41,7 @@ public class GameplayServerStateManager : NetworkStateManager
     }
 
     [ServerRpc]
-    public void PlayerReadySignal(ulong clientId)
+    public void PlayerReadySignalServerRpc(ulong clientId)
     {
         //TODO: BeginGameplayCountDownStateTransition if all clients are connected and signaled ready
         throw new NotImplementedException();
