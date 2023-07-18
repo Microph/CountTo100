@@ -17,7 +17,7 @@ public class GameplayServerStateManager : NetworkStateManager
     private UnityTransport _transport;
     private Dictionary<ulong, PlayerData> _connectedPlayerDataDict = new Dictionary<ulong, PlayerData>();
 
-    public void InitializeAndStartServer()
+    public void InitializeAndStart()
     {
         if(!GlobalServerConfigManager.IsServer)
         {

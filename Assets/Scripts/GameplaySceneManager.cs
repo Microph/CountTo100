@@ -29,11 +29,11 @@ public class GameplaySceneManager : MonoSingleton<GameplaySceneManager>
     {
         if (GlobalServerConfigManager.IsServer)
         {
-            _gameplayServerStateManager.InitializeAndStartServer();
+            _gameplayServerStateManager.InitializeAndStart();
         }
         else
         {
-            _gameplayClientStateManager.InitializeAndStartClient();
+            _gameplayClientStateManager.InitializeAndStart();
         }
     }
 

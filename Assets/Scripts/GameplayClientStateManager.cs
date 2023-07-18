@@ -9,7 +9,7 @@ public class GameplayClientStateManager : NetworkStateManager
     private NetworkManager _networkManager;
     private UnityTransport _transport;
 
-    public void InitializeAndStartClient()
+    public void InitializeAndStart()
     {
         if(!GlobalClientConfigManager.IsClient)
         {
