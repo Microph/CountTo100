@@ -16,13 +16,12 @@ public class GameplaySceneManager : MonoSingleton<GameplaySceneManager>
     [SerializeField] private GameplayServerStateManager _gameplayServerStateManager;
     [SerializeField] private GameplayClientStateManager _gameplayClientStateManager;
     [SerializeField] private InputManager _inputManager;
-    [SerializeField] private TMP_Text _currentGameplayScoreText;
-
+    [SerializeField] private GameplayUIManager _gameplayUIManager;
+    
     protected override void Awake()
     {
         base.Awake();
-        _currentGameplayScoreText.text = "0";
-        _gameplayServerStateManager.NVCurrentScore.OnValueChanged += OnCurrentScoreValueChanged;
+        _gameplayUIManager.Initialize(_gameplayServerStateManager);
     }
 
     private async void Start()
@@ -42,10 +41,5 @@ public class GameplaySceneManager : MonoSingleton<GameplaySceneManager>
         {
             Debug.LogException(ex);
         }
-    }
-
-    private void OnCurrentScoreValueChanged(int previousValue, int newValue)
-    {
-        _currentGameplayScoreText.text = newValue.ToString();
     }
 }
