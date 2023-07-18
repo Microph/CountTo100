@@ -4,15 +4,13 @@ using UnityEngine;
 using System.Collections.Generic;
 using CountTo100.Utilities;
 
-public class GameplayServerStateManager : NetworkBehaviour
+public class GameplayServerStateManager : NetworkStateManager
 {
-    public NetworkVariable<Enums.GameplayServerState> CurrentGameplayServerState = new NetworkVariable<Enums.GameplayServerState>(k_defaultGameplayServerState);
-    public NetworkVariable<int> CurrentScore = new NetworkVariable<int>(k_defaultScore);
+    public NetworkVariable<int> NVCurrentScore = new NetworkVariable<int>(k_defaultScore);
     
     [SerializeField] private Player _playerPrefab;
     [SerializeField] private Transform[] _playerPositionTransforms;
 
-    private const Enums.GameplayServerState k_defaultGameplayServerState = Enums.GameplayServerState.Standby;
     private const int k_defaultScore = 0;
 
     private NetworkManager _networkManager;
@@ -41,19 +39,19 @@ public class GameplayServerStateManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void TestAddCurrentScoreServerRpc()
     {
-        CurrentScore.Value ++;
+        NVCurrentScore.Value ++;
     }
 
     [ServerRpc(RequireOwnership = false)]
     public void OnPlayerCountServerRpc(ulong clientId)
     {
         //TODO also check 5 times/sec
-        if (CurrentGameplayServerState.Value != Enums.GameplayServerState.AllowCounting)
+        if (CurrentStateEnum != Enums.State.GameplayServer_AllowCounting)
         {
             return;
         }
 
-        CurrentScore.Value ++;
+        NVCurrentScore.Value ++;
     }
 
     private void ConnectionApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)

@@ -22,7 +22,7 @@ public class GameplaySceneManager : MonoSingleton<GameplaySceneManager>
     {
         base.Awake();
         _currentGameplayScoreText.text = "0";
-        _gameplayServerStateManager.CurrentScore.OnValueChanged += OnCurrentScoreValueChanged;
+        _gameplayServerStateManager.NVCurrentScore.OnValueChanged += OnCurrentScoreValueChanged;
     }
 
     private void Start()

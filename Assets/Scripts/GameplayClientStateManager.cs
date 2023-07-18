@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
 
-public class GameplayClientStateManager : NetworkBehaviour
+public class GameplayClientStateManager : NetworkStateManager
 {
     private NetworkManager _networkManager;
     private UnityTransport _transport;

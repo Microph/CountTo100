@@ -2,11 +2,12 @@ namespace CountTo100.Utilities
 {
     public static class Enums
     {
-        public enum GameplayServerState
+        public enum State
         {
-            Standby,
-            AllowCounting,
-            GameOver
+            None,
+            GameplayServer_BeginGameplayCountDown,
+            GameplayServer_AllowCounting,
+            GameplayServer_GameOver
         }
     }
 }
