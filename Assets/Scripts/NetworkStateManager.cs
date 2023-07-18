@@ -11,6 +11,12 @@ public abstract class NetworkStateManager : NetworkBehaviour
 
     private State _currentState = null;
 
+    public virtual void BeginFirstState(State state)
+    {
+        _currentState = state;
+        _currentState.OnEnter();
+    }
+
     public virtual void TransitTo(State newState)
     {
         if(!_currentState.AvailableStateTransitions.ContainsKey((CurrentStateEnum, newState.StateEnum)))

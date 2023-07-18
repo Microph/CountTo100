@@ -5,6 +5,7 @@ namespace CountTo100.Utilities
         public enum State
         {
             None,
+            GameplayServer_StartServer,
             GameplayServer_BeginGameplayCountDown,
             GameplayServer_AllowCounting,
             GameplayServer_GameOver

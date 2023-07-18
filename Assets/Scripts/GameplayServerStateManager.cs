@@ -17,6 +17,10 @@ public class GameplayServerStateManager : NetworkStateManager
     private UnityTransport _transport;
     private Dictionary<ulong, PlayerData> _connectedPlayerDataDict = new Dictionary<ulong, PlayerData>();
 
+    //States
+    private readonly GameplayServerStartServerState _startServerState = new();
+    private readonly GameplayServerBeginGameplayCountDownState _beginGameplayCountDownState = new();
+
     public void InitializeAndStartServer()
     {
         if(!GlobalServerConfigManager.IsServer)
@@ -29,11 +33,7 @@ public class GameplayServerStateManager : NetworkStateManager
         Debug.Assert(_networkManager != null);
         _transport = _networkManager.GetComponent<UnityTransport>();
         Debug.Assert(_transport != null);
-        _networkManager.ConnectionApprovalCallback = ConnectionApprovalCheck;
-        _networkManager.OnClientConnectedCallback += OnClientConnected;
-        _networkManager.OnClientDisconnectCallback += OnClientDisconnected;
-        _transport.SetConnectionData("127.0.0.1", 7777); //TODO: not hardcoded
-        _networkManager.StartServer();
+        BeginFirstState(_startServerState);
     }
 
     [ServerRpc(RequireOwnership = false)]
