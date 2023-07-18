@@ -1,8 +1,11 @@
 using CountTo100.Utilities;
+using static GameplayServerStateManager;
 
 public class GameplayServerBeginGameplayCountDownState : State
 {
-    public GameplayServerBeginGameplayCountDownState(IStateManageable stateManager)
+    private GameplayServerContext _gameplayServerContext;
+
+    public GameplayServerBeginGameplayCountDownState(IStateManageable stateManager, GameplayServerContext gameplayServerContext)
         : base(
             stateEnum: Enums.State.GameplayServer_BeginGameplayCountDown,
             stateManager: stateManager,
@@ -12,6 +15,7 @@ public class GameplayServerBeginGameplayCountDownState : State
             }
         )
     {
+        _gameplayServerContext = gameplayServerContext;
     }
 
     public class AllowCountingStateTransition : StateTransition

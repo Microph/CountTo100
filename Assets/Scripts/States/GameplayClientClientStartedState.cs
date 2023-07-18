@@ -5,16 +5,15 @@ using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static GameplayClientStateManager;
 
 public class GameplayClientClientStartedState : State
 {
-    private NetworkManager _networkManager;
-    private UnityTransport _transport;
+    GameplayClientContext _gameplayClientContext;
 
     public GameplayClientClientStartedState(
         IStateManageable stateManager,
-        NetworkManager networkManager, 
-        UnityTransport transport
+        GameplayClientContext gameplayClientContext
     )
         : base(
             stateEnum: Enums.State.GameplayClient_ClientStarted,
@@ -24,8 +23,7 @@ public class GameplayClientClientStartedState : State
             }
         )
     {
-        _networkManager = networkManager;
-        _transport = transport;
+        _gameplayClientContext = gameplayClientContext;
     }
 
     public override void OnEnter()

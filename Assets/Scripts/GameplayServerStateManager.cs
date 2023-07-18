@@ -7,6 +7,24 @@ using System.Threading.Tasks;
 
 public class GameplayServerStateManager : NetworkStateManager
 {
+    public class GameplayServerContext
+    {
+        public NetworkManager NetworkManager;
+        public int TargetNumberOfPlayers;
+        public Dictionary<ulong, PlayerData> ConnectedPlayerDataDict;
+        public Player PlayerPrefab;
+        public Transform[] PlayerPositionTransforms;
+
+        public GameplayServerContext(NetworkManager networkManager, int targetNumberOfPlayers, Dictionary<ulong, PlayerData> connectedPlayerDataDict, Player playerPrefab, Transform[] playerPositionTransforms)
+        {
+            NetworkManager = networkManager;
+            TargetNumberOfPlayers = targetNumberOfPlayers;
+            ConnectedPlayerDataDict = connectedPlayerDataDict;
+            PlayerPrefab = playerPrefab;
+            PlayerPositionTransforms = playerPositionTransforms;
+        }
+    }
+
     public NetworkVariable<int> NVCurrentScore = new NetworkVariable<int>(k_defaultScore);
     
     [SerializeField] private Player _playerPrefab;
@@ -39,11 +57,13 @@ public class GameplayServerStateManager : NetworkStateManager
         Debug.Log("Server object spawned!");
         SetState(new GameplayServerServerStartedState(
                 stateManager: this,
-                networkManager: _networkManager,
-                targetNumberOfPlayers: _targetNumberOfPlayers,
-                connectedPlayerDataDict: _connectedPlayerDataDict,
-                playerPrefab: _playerPrefab,
-                playerPositionTransforms: _playerPositionTransforms
+                gameplayServerContext: new GameplayServerContext(
+                    networkManager: _networkManager,
+                    targetNumberOfPlayers: _targetNumberOfPlayers,
+                    connectedPlayerDataDict: _connectedPlayerDataDict,
+                    playerPrefab: _playerPrefab,
+                    playerPositionTransforms: _playerPositionTransforms
+                )
             )
         );
     }

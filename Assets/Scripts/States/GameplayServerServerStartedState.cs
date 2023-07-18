@@ -1,23 +1,15 @@
 using CountTo100.Utilities;
-using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using static GameplayServerStateManager;
 
 public class GameplayServerServerStartedState : State
 {
-    private NetworkManager _networkManager;
-    private int _targetNumberOfPlayers;
-    private Dictionary<ulong, PlayerData> _connectedPlayerDataDict;
-    private Player _playerPrefab;
-    private Transform[] _playerPositionTransforms;
+    private GameplayServerContext _gameplayServerContext;
 
     public GameplayServerServerStartedState(
         IStateManageable stateManager,
-        NetworkManager networkManager,
-        int targetNumberOfPlayers,
-        Dictionary<ulong, PlayerData> connectedPlayerDataDict,
-        Player playerPrefab,
-        Transform[] playerPositionTransforms
+        GameplayServerContext gameplayServerContext
     )
         : base(
             stateEnum: Enums.State.GameplayServer_ServerStarted,
@@ -28,11 +20,7 @@ public class GameplayServerServerStartedState : State
             }
         )
     {
-        _networkManager = networkManager;
-        _targetNumberOfPlayers = targetNumberOfPlayers;
-        _connectedPlayerDataDict = connectedPlayerDataDict;
-        _playerPrefab = playerPrefab;
-        _playerPositionTransforms = playerPositionTransforms;
+        _gameplayServerContext = gameplayServerContext;
     }
 
     public class BeginGameplayCountDownStateTransition : StateTransition
@@ -45,29 +33,29 @@ public class GameplayServerServerStartedState : State
 
     public override void OnEnter()
     {
-        _networkManager.OnClientConnectedCallback += OnClientConnected;
-        _networkManager.OnClientDisconnectCallback += OnClientDisconnected;
+        _gameplayServerContext.NetworkManager.OnClientConnectedCallback += OnClientConnected;
+        _gameplayServerContext.NetworkManager.OnClientDisconnectCallback += OnClientDisconnected;
     }
 
     private void OnClientConnected(ulong clientId)
     {
-        SpawnPlayer(clientId, _connectedPlayerDataDict[clientId].PlayerName, _playerPositionTransforms[_connectedPlayerDataDict.Count - 1].position);
-        if(_connectedPlayerDataDict.Count == _targetNumberOfPlayers)
+        SpawnPlayer(clientId, _gameplayServerContext.ConnectedPlayerDataDict[clientId].PlayerName, _gameplayServerContext.PlayerPositionTransforms[_gameplayServerContext.ConnectedPlayerDataDict.Count - 1].position);
+        if(_gameplayServerContext.ConnectedPlayerDataDict.Count == _gameplayServerContext.TargetNumberOfPlayers)
         {
-            _stateManager.TransitTo(new GameplayServerBeginGameplayCountDownState(_stateManager));
+            _stateManager.TransitTo(new GameplayServerBeginGameplayCountDownState(_stateManager, _gameplayServerContext));
         }
     }
 
     private void OnClientDisconnected(ulong clientId)
     {
-        _connectedPlayerDataDict.Remove(clientId);
+        _gameplayServerContext.ConnectedPlayerDataDict.Remove(clientId);
         Debug.Log($"Disconnected client ID: {clientId}");
-        Debug.Log($"Disconnect reason: {_networkManager.DisconnectReason}");
+        Debug.Log($"Disconnect reason: {_gameplayServerContext.NetworkManager.DisconnectReason}");
     }
 
     private void SpawnPlayer(ulong clientId, string playerName, Vector3 position)
     {
-        var newPlayer = Object.Instantiate(original: _playerPrefab, position: position, rotation: Quaternion.identity);
+        var newPlayer = Object.Instantiate(original: _gameplayServerContext.PlayerPrefab, position: position, rotation: Quaternion.identity);
         newPlayer.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
         newPlayer.Setup(clientId, playerName);
         newPlayer.SetupClientRpc(clientId, playerName);

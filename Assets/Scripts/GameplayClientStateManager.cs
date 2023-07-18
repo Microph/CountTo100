@@ -7,17 +7,29 @@ using UnityEngine.SceneManagement;
 
 public class GameplayClientStateManager : NetworkStateManager
 {
+    public class GameplayClientContext
+    {
+        public NetworkManager NetworkManager;
+        public UnityTransport Transport;
+
+        public GameplayClientContext(NetworkManager networkManager, UnityTransport transport)
+        {
+            NetworkManager = networkManager;
+            Transport = transport;
+        }
+    }
+
     private NetworkManager _networkManager;
     private UnityTransport _transport;
 
     public async Task InitializeAndStart()
     {
-        if(!GlobalClientConfigManager.IsClient)
+        if (!GlobalClientConfigManager.IsClient)
         {
             Debug.LogWarning("Did not config as a client");
             return;
         }
-        
+
         _networkManager = NetworkManager.Singleton;
         Debug.Assert(_networkManager != null);
         _transport = _networkManager.GetComponent<UnityTransport>();
@@ -30,8 +42,10 @@ public class GameplayClientStateManager : NetworkStateManager
         Debug.Log("Client object spawned!");
         SetState(new GameplayClientClientStartedState(
                 stateManager: this,
-                networkManager: _networkManager,
-                transport: _transport
+                gameplayClientContext: new GameplayClientContext(
+                    networkManager: _networkManager,
+                    transport: _transport
+                )
             )
         );
     }
