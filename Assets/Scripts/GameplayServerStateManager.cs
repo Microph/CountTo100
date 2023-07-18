@@ -40,13 +40,6 @@ public class GameplayServerStateManager : NetworkStateManager
         );
     }
 
-    [ServerRpc]
-    public void PlayerReadySignalServerRpc(ulong clientId)
-    {
-        //TODO: BeginGameplayCountDownStateTransition if all clients are connected and signaled ready
-        throw new NotImplementedException();
-    }
-
     [ServerRpc(RequireOwnership = false)]
     public void TestAddCurrentScoreServerRpc()
     {

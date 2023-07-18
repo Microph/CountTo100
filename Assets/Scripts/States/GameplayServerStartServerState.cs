@@ -69,6 +69,7 @@ public class GameplayServerStartServerState : State
     private void OnClientConnected(ulong clientId)
     {
         SpawnPlayer(clientId, _connectedPlayerDataDict[clientId].PlayerName, _playerPositionTransforms[_connectedPlayerDataDict.Count - 1].position);
+        //TODO: if all players are spawned, goto start countdown state    
     }
 
     private void OnClientDisconnected(ulong clientId)
