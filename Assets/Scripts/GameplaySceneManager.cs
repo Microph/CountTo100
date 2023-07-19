@@ -34,7 +34,7 @@ public class GameplaySceneManager : MonoSingleton<GameplaySceneManager>
             }
             else
             {
-                _gameplayClientStateManager.InitializeAndStart();
+                await _gameplayClientStateManager.InitializeAndStart();
             }
         }
         catch (Exception ex)
