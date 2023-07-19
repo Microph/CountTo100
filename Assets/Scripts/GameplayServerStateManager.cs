@@ -9,14 +9,16 @@ public class GameplayServerStateManager : NetworkStateManager
 {
     public class GameplayServerContext
     {
+        GameplaySceneManager GameplaySceneManager;
         public NetworkManager NetworkManager;
         public int TargetNumberOfPlayers;
         public Dictionary<ulong, PlayerData> ConnectedPlayerDataDict;
         public Player PlayerPrefab;
         public Transform[] PlayerPositionTransforms;
 
-        public GameplayServerContext(NetworkManager networkManager, int targetNumberOfPlayers, Dictionary<ulong, PlayerData> connectedPlayerDataDict, Player playerPrefab, Transform[] playerPositionTransforms)
+        public GameplayServerContext(GameplaySceneManager gameplaySceneManager, NetworkManager networkManager, int targetNumberOfPlayers, Dictionary<ulong, PlayerData> connectedPlayerDataDict, Player playerPrefab, Transform[] playerPositionTransforms)
         {
+            GameplaySceneManager = gameplaySceneManager;
             NetworkManager = networkManager;
             TargetNumberOfPlayers = targetNumberOfPlayers;
             ConnectedPlayerDataDict = connectedPlayerDataDict;
@@ -58,6 +60,7 @@ public class GameplayServerStateManager : NetworkStateManager
         SetState(new GameplayServerServerStartedState(
                 stateManager: this,
                 gameplayServerContext: new GameplayServerContext(
+                    gameplaySceneManager: GameplaySceneManager.Instance,
                     networkManager: _networkManager,
                     targetNumberOfPlayers: _targetNumberOfPlayers,
                     connectedPlayerDataDict: _connectedPlayerDataDict,

@@ -9,11 +9,13 @@ public class GameplayClientStateManager : StateManager
 {
     public class GameplayClientContext
     {
+        public GameplaySceneManager GameplaySceneManager;
         public NetworkManager NetworkManager;
         public UnityTransport Transport;
 
-        public GameplayClientContext(NetworkManager networkManager, UnityTransport transport)
+        public GameplayClientContext(GameplaySceneManager gameplaySceneManager, NetworkManager networkManager, UnityTransport transport)
         {
+            GameplaySceneManager = gameplaySceneManager;
             NetworkManager = networkManager;
             Transport = transport;
         }
@@ -43,6 +45,7 @@ public class GameplayClientStateManager : StateManager
         SetState(new GameplayClientClientStartedState(
                 stateManager: this,
                 gameplayClientContext: new GameplayClientContext(
+                    gameplaySceneManager: GameplaySceneManager.Instance,
                     networkManager: _networkManager,
                     transport: _transport
                 )

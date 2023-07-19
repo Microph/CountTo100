@@ -28,6 +28,20 @@ public class GameplayClientClientStartedState : State
 
     public override void OnEnter()
     {
-        //TODO: Wait until server countdown finished -> to play state
+        _gameplayClientContext.GameplaySceneManager.GameplayServerStateManager.NVCurrentStateEnum.OnValueChanged += OnGameplayServerStateChanged;
+        //TODO: Server RPC ready signal
+    }
+
+    public override void OnExit()
+    {
+        _gameplayClientContext.GameplaySceneManager.GameplayServerStateManager.NVCurrentStateEnum.OnValueChanged -= OnGameplayServerStateChanged;
+    }
+
+    private void OnGameplayServerStateChanged(Enums.State previousValue, Enums.State newValue)
+    {
+        if(newValue == Enums.State.GameplayServer_BeginGameplayCountDown)
+        {
+            //TODO _stateManager.TransitTo(GameplayServer_BeginGameplayCountDown)
+        }
     }
 }

@@ -40,6 +40,7 @@ public class GameplayServerServerStartedState : State
     private void OnClientConnected(ulong clientId)
     {
         SpawnPlayer(clientId, _gameplayServerContext.ConnectedPlayerDataDict[clientId].PlayerName, _gameplayServerContext.PlayerPositionTransforms[_gameplayServerContext.ConnectedPlayerDataDict.Count - 1].position);
+        //TODO: change to check if all clients has sent ready signals
         if(_gameplayServerContext.ConnectedPlayerDataDict.Count == _gameplayServerContext.TargetNumberOfPlayers)
         {
             _stateManager.TransitTo(new GameplayServerBeginGameplayCountDownState(_stateManager, _gameplayServerContext));
