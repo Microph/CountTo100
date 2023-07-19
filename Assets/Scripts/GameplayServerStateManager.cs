@@ -103,7 +103,6 @@ public class GameplayServerStateManager : NetworkStateManager
         _connectedPlayerDataDict.TryGetValue(clientId, out PlayerData playerData);
         if(playerData != null)
         {
-            Debug.Log($"playerData.PlayerName {playerData.PlayerName}");
             return playerData.PlayerName;
         }
         else
