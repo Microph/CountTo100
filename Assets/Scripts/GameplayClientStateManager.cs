@@ -1,11 +1,9 @@
 ﻿using Unity.Netcode.Transports.UTP;
 using Unity.Netcode;
 using UnityEngine;
-using CountTo100.Utilities;
-using System.Threading.Tasks;
 using UnityEngine.SceneManagement;
 
-public class GameplayClientStateManager : NetworkStateManager
+public class GameplayClientStateManager : StateManager
 {
     public class GameplayClientContext
     {
@@ -22,7 +20,7 @@ public class GameplayClientStateManager : NetworkStateManager
     private NetworkManager _networkManager;
     private UnityTransport _transport;
 
-    public async Task InitializeAndStart()
+    public void InitializeAndStart()
     {
         if (!GlobalClientConfigManager.IsClient)
         {
@@ -38,8 +36,6 @@ public class GameplayClientStateManager : NetworkStateManager
         _transport.SetConnectionData("127.0.0.1", 7777); //TODO: not hardcoded
         _networkManager.NetworkConfig.ConnectionData = System.Text.Encoding.ASCII.GetBytes("TestPlayerName"); //TODO: get from text input
         _networkManager.StartClient();
-        await TaskHelper.When(() => IsSpawned);
-        Debug.Log("Client object spawned!");
         SetState(new GameplayClientClientStartedState(
                 stateManager: this,
                 gameplayClientContext: new GameplayClientContext(

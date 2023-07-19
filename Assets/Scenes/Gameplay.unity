@@ -969,8 +969,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc2e036a65d91bb4a86412df3cebcaec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NVCurrentStateEnum:
-    m_InternalValue: 0
 --- !u!4 &974469692
 Transform:
   m_ObjectHideFlags: 0

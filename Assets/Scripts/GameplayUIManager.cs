@@ -9,25 +9,26 @@ public  class GameplayUIManager : MonoBehaviour
     [SerializeField] private TMP_Text _currentGameplayScoreText;
     [SerializeField] private TMP_Text _winnerText;
 
-    private GameplayServerStateManager _gameplayServerStateManager;
+    private GameplayClientStateManager _gameplayClientStateManager;
 
-    public void Initialize(GameplayServerStateManager gameplayServerStateManager)
+    //reflect changes on client-side only
+    public void Initialize(GameplayClientStateManager gameplayServerStateManager)
     {
-        _gameplayServerStateManager = gameplayServerStateManager;
-        _gameplayServerStateManager.NVCurrentStateEnum.OnValueChanged += OnGameplayServerStateChanged;
-        _gameplayServerStateManager.NVCurrentScore.OnValueChanged += OnCurrentScoreValueChanged;
+        _gameplayClientStateManager = gameplayServerStateManager;
+        _gameplayClientStateManager.OnGameplayClientStateChanged += OnGameplayClientStateChanged;
+        //_gameplayClientStateManager.CurrentScore.OnValueChanged += OnCurrentScoreValueChanged;
     }
 
-    private void OnGameplayServerStateChanged(Enums.State previousState, Enums.State newState)
+    private void OnGameplayClientStateChanged(Enums.State previousState, Enums.State newState)
     {
         switch (newState)
         {
-            case Enums.State.GameplayServer_BeginGameplayCountDown:
+            case Enums.State.GameplayClient_BeginGameplayCountDown:
                 HideAll();
                 _countDownStartGameplayText.gameObject.SetActive(true);
-                //TODO change client state -> countdown
+                //TODO show countdown UI
                 break;
-            case Enums.State.GameplayServer_AllowCounting:
+            case Enums.State.GameplayClient_AllowCounting:
                 //if client still counting down -> 
                 HideAll();
                 //show start gameplay UI
