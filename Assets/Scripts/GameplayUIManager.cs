@@ -1,5 +1,4 @@
-﻿using System;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
 public  class GameplayUIManager : MonoBehaviour
@@ -32,5 +31,16 @@ public  class GameplayUIManager : MonoBehaviour
     public void UpdateCountDownStartGameplayNumber(int currentCountDownTime)
     {
         _countDownStartGameplayText.text = $"Game starts in\n{currentCountDownTime}";
+    }
+
+    public void ShowCurrentGameplayScoreText()
+    {
+        HideAll();
+        _currentGameplayScoreText.gameObject.SetActive(true) ;
+    }
+
+    public void UpdateGameplayScoreText(int newValue)
+    {
+        _currentGameplayScoreText.text = newValue.ToString();
     }
 }

@@ -3,13 +3,13 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
-    public Action MainInputAction;
+    public Action PlayerClickAction;
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            MainInputAction?.Invoke();
+            PlayerClickAction?.Invoke();
         }
     }
 }

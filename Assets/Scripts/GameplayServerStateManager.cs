@@ -43,24 +43,6 @@ public class GameplayServerStateManager : NetworkStateManager
     private Dictionary<ulong, PlayerData> _connectedPlayerDataDict = new Dictionary<ulong, PlayerData>();
 
     [ServerRpc(RequireOwnership = false)]
-    public void TestAddCurrentScoreServerRpc()
-    {
-        NVCurrentScore.Value++;
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    public void OnPlayerCountServerRpc(ulong clientId)
-    {
-        //TODO also check 5 times/sec
-        if (CurrentStateEnum != Enums.State.GameplayServer_AllowCounting)
-        {
-            return;
-        }
-
-        NVCurrentScore.Value++;
-    }
-
-    [ServerRpc(RequireOwnership = false)]
     public void PlayerReadySignalServerRpc(ulong clientId)
     {
         if(!_connectedPlayerDataDict.ContainsKey(clientId))
@@ -74,6 +56,19 @@ public class GameplayServerStateManager : NetworkStateManager
 
         _connectedPlayerDataDict[clientId].ReadyStatus = true;
         OnPlayerReadySignal?.Invoke(_connectedPlayerDataDict.Sum(x => x.Value.ReadyStatus ? 1 : 0));
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void OnPlayerCountServerRpc(ulong clientId)
+    {
+        //TODO also limit 5 times/sec
+        if (CurrentStateEnum != Enums.State.GameplayServer_AllowCounting)
+        {
+            return;
+        }
+
+        NVCurrentScore.Value++;
+        //TODO fire event update latest clicker clientId
     }
 
     public async Task InitializeAndStart()

@@ -69,15 +69,4 @@ public class GameplayClientStateManager : StateManager
         Debug.Log($"Disconnect reason: {_networkManager.DisconnectReason}");
         SceneManager.LoadScene("MainMenu");
     }
-
-    //TODO Set after countdown
-    private void SetMainGameplayInputEvents()
-    {
-        GameplaySceneManager.Instance.InputManager.MainInputAction = MainInputAction;
-    }
-
-    private void MainInputAction()
-    {
-        GameplaySceneManager.Instance.GameplayServerStateManager.TestAddCurrentScoreServerRpc();
-    }
 }
