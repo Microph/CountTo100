@@ -7,6 +7,7 @@ public class PlayerObject : NetworkBehaviour
 {
     public NetworkVariable<ulong> NVClientId = new NetworkVariable<ulong>();
     public NetworkVariable<FixedString64Bytes> NVPlayerName = new NetworkVariable<FixedString64Bytes>();
+    //TODO: color
 
     [SerializeField] private SpriteRenderer _playerSpriteRenderer;
     [SerializeField] private GameObject _winnerSpriteGameObject;
@@ -35,6 +36,7 @@ public class PlayerObject : NetworkBehaviour
     private void RefreshVisual()
     {
         _playerNameText.text = NVPlayerName.Value.ToString();
+        //TODO: color
     }
 
     private void OnNVPlayerNameChanged(FixedString64Bytes _, FixedString64Bytes __)
