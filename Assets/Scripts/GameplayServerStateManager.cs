@@ -6,6 +6,7 @@ using CountTo100.Utilities;
 using System.Threading.Tasks;
 using System;
 using System.Linq;
+using Unity.Collections;
 
 public class GameplayServerStateManager : NetworkStateManager
 {
@@ -31,15 +32,13 @@ public class GameplayServerStateManager : NetworkStateManager
 
     public event Action<int> OnPlayerReadySignal;
     public event Action<ulong> OnPlayerCount;
-    public NetworkVariable<int> NVCurrentScore = new NetworkVariable<int>(k_defaultScore);
-    public NetworkVariable<ulong> NVLatestClickerId = new NetworkVariable<ulong>(k_defaultLatestClickerId);
+    public NetworkVariable<int> NVCurrentScore = new NetworkVariable<int>();
+    public NetworkVariable<ulong> NVLatestClickerId = new NetworkVariable<ulong>();
+    public NetworkVariable<FixedString64Bytes> NVWinnerClickerName = new NetworkVariable<FixedString64Bytes>();
     
     [SerializeField] private Player _playerPrefab;
     [SerializeField] private Transform[] _playerPositionTransforms;
-
-    private const int k_defaultScore = 0;
-    private const ulong k_defaultLatestClickerId = 0;
-
+    
     private NetworkManager _networkManager;
     private UnityTransport _transport;
     private int _targetNumberOfPlayers;
@@ -104,6 +103,7 @@ public class GameplayServerStateManager : NetworkStateManager
         _connectedPlayerDataDict.TryGetValue(clientId, out PlayerData playerData);
         if(playerData != null)
         {
+            Debug.Log($"playerData.PlayerName {playerData.PlayerName}");
             return playerData.PlayerName;
         }
         else

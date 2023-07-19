@@ -20,7 +20,7 @@ public class GameplayClientEndGameState : State
     public override void OnEnter()
     {
         ulong winnerId = _gameplayClientContext.GameplaySceneManager.GameplayServerStateManager.NVLatestClickerId.Value;
-        _gameplayClientContext.GameplaySceneManager.GameplayUIManager.SetWinnerText(_gameplayClientContext.GameplaySceneManager.GameplayServerStateManager.GetPlayerName(winnerId), winnerId);
+        _gameplayClientContext.GameplaySceneManager.GameplayUIManager.SetWinnerText(_gameplayClientContext.GameplaySceneManager.GameplayServerStateManager.NVWinnerClickerName.Value.ToString(), winnerId);
         _gameplayClientContext.GameplaySceneManager.GameplayUIManager.ShowWinnerText();
     }
 }

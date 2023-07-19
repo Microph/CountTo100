@@ -17,6 +17,7 @@ public class Player : NetworkBehaviour
         //TODO set color
     }
 
+    //TODO: later joined client failed to sync this -> will use netvar instead
     [ClientRpc]
     public void SetupClientRpc(ulong clientId, string playerName)
     {

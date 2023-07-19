@@ -61,8 +61,9 @@ public class GameplayServerAllowCountingState : State
         _gameplayServerContext.ConnectedPlayerDataDict[clientId].CumulativeClicks++;
         _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.NVCurrentScore.Value++;
         _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.NVLatestClickerId.Value = clientId;
-        if(_gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.NVCurrentScore.Value == 100)
+        if (_gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.NVCurrentScore.Value == 100)
         {
+            _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.NVWinnerClickerName.Value = _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.GetPlayerName(clientId);
             _stateManager.TransitTo(new GameplayServerEndGameState(_stateManager, _gameplayServerContext));
         }
     }
