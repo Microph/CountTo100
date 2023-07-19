@@ -29,7 +29,12 @@ public class GameplayServerAllowCountingState : State
 
     public override void OnEnter()
     {
-        _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.OnPlayerCount += OnPlayerCountServerRpc;
+        _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.OnPlayerCount += OnPlayerCount;
+    }
+
+    public override void OnExit()
+    {
+        _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.OnPlayerCount -= OnPlayerCount;
     }
 
     public override void OnUpdate()
@@ -45,14 +50,8 @@ public class GameplayServerAllowCountingState : State
         }
     }
 
-    public override void OnExit()
+    private void OnPlayerCount(ulong clientId)
     {
-        _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.OnPlayerCount -= OnPlayerCountServerRpc;
-    }
-
-    private void OnPlayerCountServerRpc(ulong clientId)
-    {
-        //limit 5 clicks/sec
         if (_gameplayServerContext.ConnectedPlayerDataDict[clientId].CumulativeClicks > 5) 
         {
             Debug.LogWarning("reached 5 clicks/sec limit");
