@@ -53,7 +53,7 @@ public class GameplayServerStateManager : NetworkStateManager
         _networkManager.ConnectionApprovalCallback = ConnectionApprovalCheck;
         _transport.SetConnectionData("127.0.0.1", 7777); //TODO: not hardcoded
         _networkManager.StartServer();
-        await TaskHelper.When(() => IsSpawned);
+        await TaskHelper.When(() => IsServer && IsSpawned);
         Debug.Log("Server object spawned!");
         SetState(new GameplayServerServerStartedState(
                 stateManager: this,
