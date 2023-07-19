@@ -3,7 +3,7 @@ using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
-public class Player : NetworkBehaviour
+public class PlayerObject : NetworkBehaviour
 {
     public NetworkVariable<ulong> NVClientId = new NetworkVariable<ulong>();
     public NetworkVariable<FixedString64Bytes> NVPlayerName = new NetworkVariable<FixedString64Bytes>();
@@ -22,22 +22,23 @@ public class Player : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
+        RefreshVisual();
         NVPlayerName.OnValueChanged += OnNVPlayerNameChanged;
     }
 
-    public override void OnNetworkDespawn()
+    public override void OnDestroy()
     {
-        base.OnNetworkDespawn();
         NVPlayerName.OnValueChanged -= OnNVPlayerNameChanged;
-    }
-
-    private void OnNVPlayerNameChanged(FixedString64Bytes previousValue, FixedString64Bytes newValue)
-    {
-        RefreshVisual();
+        base.OnDestroy();
     }
 
     private void RefreshVisual()
     {
         _playerNameText.text = NVPlayerName.Value.ToString();
+    }
+
+    private void OnNVPlayerNameChanged(FixedString64Bytes _, FixedString64Bytes __)
+    {
+        RefreshVisual();
     }
 }

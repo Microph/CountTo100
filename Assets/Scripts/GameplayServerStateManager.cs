@@ -16,10 +16,10 @@ public class GameplayServerStateManager : NetworkStateManager
         public NetworkManager NetworkManager;
         public int TargetNumberOfPlayers;
         public Dictionary<ulong, PlayerData> ConnectedPlayerDataDict;
-        public Player PlayerPrefab;
+        public PlayerObject PlayerPrefab;
         public Transform[] PlayerPositionTransforms;
 
-        public GameplayServerContext(GameplaySceneManager gameplaySceneManager, NetworkManager networkManager, int targetNumberOfPlayers, Dictionary<ulong, PlayerData> connectedPlayerDataDict, Player playerPrefab, Transform[] playerPositionTransforms)
+        public GameplayServerContext(GameplaySceneManager gameplaySceneManager, NetworkManager networkManager, int targetNumberOfPlayers, Dictionary<ulong, PlayerData> connectedPlayerDataDict, PlayerObject playerPrefab, Transform[] playerPositionTransforms)
         {
             GameplaySceneManager = gameplaySceneManager;
             NetworkManager = networkManager;
@@ -36,7 +36,7 @@ public class GameplayServerStateManager : NetworkStateManager
     public NetworkVariable<ulong> NVLatestClickerId = new NetworkVariable<ulong>();
     public NetworkVariable<FixedString64Bytes> NVWinnerClickerName = new NetworkVariable<FixedString64Bytes>();
     
-    [SerializeField] private Player _playerPrefab;
+    [SerializeField] private PlayerObject _playerPrefab;
     [SerializeField] private Transform[] _playerPositionTransforms;
     
     private NetworkManager _networkManager;
