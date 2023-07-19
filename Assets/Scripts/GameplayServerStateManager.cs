@@ -32,12 +32,13 @@ public class GameplayServerStateManager : NetworkStateManager
     public event Action<int> OnPlayerReadySignal;
     public event Action<ulong> OnPlayerCount;
     public NetworkVariable<int> NVCurrentScore = new NetworkVariable<int>(k_defaultScore);
-    public NetworkVariable<ulong?> NVLatestClickerId = new NetworkVariable<ulong?>(null);
+    public NetworkVariable<ulong> NVLatestClickerId = new NetworkVariable<ulong>(k_defaultLatestClickerId);
     
     [SerializeField] private Player _playerPrefab;
     [SerializeField] private Transform[] _playerPositionTransforms;
 
     private const int k_defaultScore = 0;
+    private const ulong k_defaultLatestClickerId = 0;
 
     private NetworkManager _networkManager;
     private UnityTransport _transport;

@@ -54,7 +54,7 @@ public class GameplayServerAllowCountingState : State
     {
         if (_gameplayServerContext.ConnectedPlayerDataDict[clientId].CumulativeClicks > 5) 
         {
-            Debug.LogWarning("reached 5 clicks/sec limit");
+            Debug.Log($"clientId {clientId} reached 5 clicks/sec limit");
             return;
         }
 
