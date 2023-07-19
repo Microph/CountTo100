@@ -1,21 +1,46 @@
-﻿using TMPro;
+﻿using CountTo100.Utilities;
+using System;
+using TMPro;
 using UnityEngine;
 
 public  class GameplayUIManager : MonoBehaviour
 {
+    [SerializeField] private TMP_Text _waitingForPlayerText;
+    [SerializeField] private TMP_Text _countDownStartGameplayText;
     [SerializeField] private TMP_Text _currentGameplayScoreText;
+    [SerializeField] private TMP_Text _winnerText;
 
     private GameplayServerStateManager _gameplayServerStateManager;
 
     public void Initialize(GameplayServerStateManager gameplayServerStateManager)
     {
         _gameplayServerStateManager = gameplayServerStateManager;
-        //TODO: listen to server state change event and set active UI accordingly
+        _gameplayServerStateManager.NVCurrentStateEnum.OnValueChanged += OnGameplayServerStateChanged;
         _gameplayServerStateManager.NVCurrentScore.OnValueChanged += OnCurrentScoreValueChanged;
+    }
+
+    private void OnGameplayServerStateChanged(Enums.State previousState, Enums.State newState)
+    {
+        switch (newState)
+        {
+            case Enums.State.GameplayServer_BeginGameplayCountDown:
+                HideAll();
+                _countDownStartGameplayText.gameObject.SetActive(true);
+                //TODO countdown number update in real time
+                break;
+        }
     }
 
     private void OnCurrentScoreValueChanged(int previousValue, int newValue)
     {
         _currentGameplayScoreText.text = newValue.ToString();
+    }
+
+    private void HideAll()
+    {
+        _waitingForPlayerText.gameObject.SetActive(false);
+        _countDownStartGameplayText.gameObject.SetActive(false);
+        _currentGameplayScoreText.gameObject.SetActive(false);
+        _winnerText.gameObject.SetActive(false);
     }
 }

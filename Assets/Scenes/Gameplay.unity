@@ -627,10 +627,10 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1047495786}
   - {fileID: 195664815}
   - {fileID: 84972550}
   - {fileID: 2120644308}
+  - {fileID: 1047495786}
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -651,7 +651,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa46587dac0f80e4684c347b3e6f268d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _waitingForPlayerText: {fileID: 195664816}
+  _countDownStartGameplayText: {fileID: 84972551}
   _currentGameplayScoreText: {fileID: 2120644309}
+  _winnerText: {fileID: 1047495787}
 --- !u!1 &541221506
 GameObject:
   m_ObjectHideFlags: 0
