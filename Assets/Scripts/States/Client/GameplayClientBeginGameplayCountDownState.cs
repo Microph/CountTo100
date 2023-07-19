@@ -1,10 +1,5 @@
 using CountTo100.Utilities;
-using System;
-using System.Collections.Generic;
-using Unity.Netcode;
-using Unity.Netcode.Transports.UTP;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using static GameplayClientStateManager;
 
 public class GameplayClientBeginGameplayCountDownState : State
@@ -32,8 +27,14 @@ public class GameplayClientBeginGameplayCountDownState : State
     public override void OnEnter()
     {
         _currentCountDownTime = k_defaultCountDownTime;
+        _gameplayClientContext.GameplaySceneManager.GameplayServerStateManager.NVCurrentStateEnum.OnValueChanged += OnGameplayServerStateChanged;
         _gameplayClientContext.GameplaySceneManager.GameplayUIManager.UpdateCountDownStartGameplayNumber(Mathf.CeilToInt(_currentCountDownTime));
         _gameplayClientContext.GameplaySceneManager.GameplayUIManager.ShowCountDownStartGameplayText();
+    }
+
+    public override void OnExit()
+    {
+        _gameplayClientContext.GameplaySceneManager.GameplayServerStateManager.NVCurrentStateEnum.OnValueChanged -= OnGameplayServerStateChanged;
     }
 
     public override void OnUpdate()
@@ -44,6 +45,15 @@ public class GameplayClientBeginGameplayCountDownState : State
         {
             _currentCountDownTime = 0;
             _gameplayClientContext.GameplaySceneManager.GameplayUIManager.UpdateCountDownStartGameplayNumber(Mathf.CeilToInt(_currentCountDownTime));
+            //TODO: _stateManager.TransitTo(new GameplayClientAllowCountingState(_stateManager, _gameplayClientContext));
+        }
+    }
+
+    private void OnGameplayServerStateChanged(Enums.State _, Enums.State newState)
+    {
+        //in case client countdown slower than server does -> skip right to counting state
+        if(newState == Enums.State.GameplayServer_AllowCounting)
+        {
             //TODO: _stateManager.TransitTo(new GameplayClientAllowCountingState(_stateManager, _gameplayClientContext));
         }
     }

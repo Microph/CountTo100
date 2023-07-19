@@ -4,11 +4,6 @@ using UnityEngine;
 
 public  class GameplayUIManager : MonoBehaviour
 {
-    public TMP_Text WaitingForPlayerText => _waitingForPlayerText;
-    public TMP_Text CountDownStartGameplayText => _countDownStartGameplayText;
-    public TMP_Text CurrentGameplayScoreText => _currentGameplayScoreText;
-    public TMP_Text WinnerText => _winnerText;
-
     [SerializeField] private TMP_Text _waitingForPlayerText;
     [SerializeField] private TMP_Text _countDownStartGameplayText;
     [SerializeField] private TMP_Text _currentGameplayScoreText;
