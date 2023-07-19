@@ -12,6 +12,7 @@ public class GameplaySceneManager : MonoSingleton<GameplaySceneManager>
     public GameplayServerStateManager GameplayServerStateManager => _gameplayServerStateManager;
     public GameplayClientStateManager GameplayClientStateManager => _gameplayClientStateManager;
     public InputManager InputManager => _inputManager;
+    public GameplayUIManager GameplayUIManager => _gameplayUIManager;
 
     [SerializeField] private GameplayServerStateManager _gameplayServerStateManager;
     [SerializeField] private GameplayClientStateManager _gameplayClientStateManager;
@@ -21,7 +22,7 @@ public class GameplaySceneManager : MonoSingleton<GameplaySceneManager>
     protected override void Awake()
     {
         base.Awake();
-        _gameplayUIManager.Initialize(_gameplayClientStateManager);
+        _gameplayUIManager.Initialize();
     }
 
     private async void Start()

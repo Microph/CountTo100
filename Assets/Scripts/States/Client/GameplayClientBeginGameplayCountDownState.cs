@@ -9,7 +9,10 @@ using static GameplayClientStateManager;
 
 public class GameplayClientBeginGameplayCountDownState : State
 {
-    GameplayClientContext _gameplayClientContext;
+    private const float k_defaultCountDownTime = 3;
+
+    private GameplayClientContext _gameplayClientContext;
+    private float _currentCountDownTime = 0;
 
     public GameplayClientBeginGameplayCountDownState(
         IStateManageable stateManager,
@@ -28,6 +31,20 @@ public class GameplayClientBeginGameplayCountDownState : State
 
     public override void OnEnter()
     {
-        //TODO start countdown and show UI
+        _currentCountDownTime = k_defaultCountDownTime;
+        _gameplayClientContext.GameplaySceneManager.GameplayUIManager.UpdateCountDownStartGameplayNumber(Mathf.CeilToInt(_currentCountDownTime));
+        _gameplayClientContext.GameplaySceneManager.GameplayUIManager.ShowCountDownStartGameplayText();
+    }
+
+    public override void OnUpdate()
+    {
+        _currentCountDownTime -= Time.deltaTime;
+        _gameplayClientContext.GameplaySceneManager.GameplayUIManager.UpdateCountDownStartGameplayNumber(Mathf.CeilToInt(_currentCountDownTime));
+        if (_currentCountDownTime <= 0)
+        {
+            _currentCountDownTime = 0;
+            _gameplayClientContext.GameplaySceneManager.GameplayUIManager.UpdateCountDownStartGameplayNumber(Mathf.CeilToInt(_currentCountDownTime));
+            //TODO: _stateManager.TransitTo(new GameplayClientAllowCountingState(_stateManager, _gameplayClientContext));
+        }
     }
 }
