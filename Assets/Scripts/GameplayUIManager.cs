@@ -1,5 +1,4 @@
 ﻿using CountTo100.Utilities;
-using System;
 using TMPro;
 using UnityEngine;
 
@@ -26,7 +25,7 @@ public  class GameplayUIManager : MonoBehaviour
             case Enums.State.GameplayServer_BeginGameplayCountDown:
                 HideAll();
                 _countDownStartGameplayText.gameObject.SetActive(true);
-                //TODO countdown number update in real time
+                //TODO change client state -> countdown
                 break;
             case Enums.State.GameplayServer_AllowCounting:
                 //if client still counting down -> 

@@ -1,8 +1,11 @@
 using CountTo100.Utilities;
+using UnityEngine;
 using static GameplayServerStateManager;
 
 public class GameplayServerBeginGameplayCountDownState : State
 {
+    private const float k_defaultCountDownTime = 3;
+
     private GameplayServerContext _gameplayServerContext;
     private float _currentCountDownTime = 0;
 
@@ -29,8 +32,16 @@ public class GameplayServerBeginGameplayCountDownState : State
 
     public override void OnEnter()
     {
-        //TODO
-        //Show 3 2 1 countdown animation
-        //then, transition to allow player input state
+        _currentCountDownTime = k_defaultCountDownTime;
+    }
+
+    public override void OnUpdate()
+    {
+        _currentCountDownTime -= Time.deltaTime;
+        if(_currentCountDownTime <= 0 ) 
+        {
+            _currentCountDownTime = 0;
+            _stateManager.TransitTo(new GameplayServerAllowCountingState(_stateManager, _gameplayServerContext));
+        }
     }
 }
