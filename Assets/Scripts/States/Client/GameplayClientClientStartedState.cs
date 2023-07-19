@@ -20,10 +20,19 @@ public class GameplayClientClientStartedState : State
             stateManager: stateManager,
             availableStateTransitions: new StateTransition[]
             {
+                new BeginGameplayCountDownStateTransition()
             }
         )
     {
         _gameplayClientContext = gameplayClientContext;
+    }
+
+    public class BeginGameplayCountDownStateTransition : StateTransition
+    {
+        public BeginGameplayCountDownStateTransition()
+            : base(Enums.State.GameplayClient_ClientStarted, Enums.State.GameplayClient_BeginGameplayCountDown)
+        {
+        }
     }
 
     public override void OnEnter()
@@ -41,7 +50,7 @@ public class GameplayClientClientStartedState : State
     {
         if(newValue == Enums.State.GameplayServer_BeginGameplayCountDown)
         {
-            //TODO _stateManager.TransitTo(GameplayServer_BeginGameplayCountDown)
+            _stateManager.TransitTo(new GameplayClientBeginGameplayCountDownState(_stateManager, _gameplayClientContext));
         }
     }
 }
