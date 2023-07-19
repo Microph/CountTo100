@@ -28,6 +28,12 @@ public  class GameplayUIManager : MonoBehaviour
                 _countDownStartGameplayText.gameObject.SetActive(true);
                 //TODO countdown number update in real time
                 break;
+            case Enums.State.GameplayServer_AllowCounting:
+                //if client still counting down -> 
+                HideAll();
+                //show start gameplay UI
+                //change clientstate -> allow gameplay input
+                break;
         }
     }
 

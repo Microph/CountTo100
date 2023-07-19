@@ -4,6 +4,7 @@ using static GameplayServerStateManager;
 public class GameplayServerBeginGameplayCountDownState : State
 {
     private GameplayServerContext _gameplayServerContext;
+    private float _currentCountDownTime = 0;
 
     public GameplayServerBeginGameplayCountDownState(IStateManageable stateManager, GameplayServerContext gameplayServerContext)
         : base(
