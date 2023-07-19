@@ -30,7 +30,9 @@ public class GameplayServerStateManager : NetworkStateManager
     }
 
     public event Action<int> OnPlayerReadySignal;
+    public event Action<ulong> OnPlayerCount;
     public NetworkVariable<int> NVCurrentScore = new NetworkVariable<int>(k_defaultScore);
+    public NetworkVariable<ulong?> NVLatestClickerId = new NetworkVariable<ulong?>(null);
     
     [SerializeField] private Player _playerPrefab;
     [SerializeField] private Transform[] _playerPositionTransforms;
@@ -59,16 +61,9 @@ public class GameplayServerStateManager : NetworkStateManager
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void OnPlayerCountServerRpc(ulong clientId)
+    public void PlayerCountServerRpc(ulong clientId)
     {
-        //TODO also limit 5 times/sec
-        if (CurrentStateEnum != Enums.State.GameplayServer_AllowCounting)
-        {
-            return;
-        }
-
-        NVCurrentScore.Value++;
-        //TODO fire event update latest clicker clientId
+        OnPlayerCount?.Invoke(clientId);
     }
 
     public async Task InitializeAndStart()
