@@ -35,16 +35,18 @@ public class GameplayServerServerStartedState : State
     {
         _gameplayServerContext.NetworkManager.OnClientConnectedCallback += OnClientConnected;
         _gameplayServerContext.NetworkManager.OnClientDisconnectCallback += OnClientDisconnected;
+        _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.OnPlayerReadySignal += OnPlayerReadySignal;
+    }
+
+    public override void OnExit()
+    {
+        _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.OnPlayerReadySignal -= OnPlayerReadySignal;
     }
 
     private void OnClientConnected(ulong clientId)
     {
         SpawnPlayer(clientId, _gameplayServerContext.ConnectedPlayerDataDict[clientId].PlayerName, _gameplayServerContext.PlayerPositionTransforms[_gameplayServerContext.ConnectedPlayerDataDict.Count - 1].position);
-        //TODO: change to check if all clients has sent ready signals
-        if(_gameplayServerContext.ConnectedPlayerDataDict.Count == _gameplayServerContext.TargetNumberOfPlayers)
-        {
-            _stateManager.TransitTo(new GameplayServerBeginGameplayCountDownState(_stateManager, _gameplayServerContext));
-        }
+        //TODO assign Player ref to client
     }
 
     private void OnClientDisconnected(ulong clientId)
@@ -58,7 +60,16 @@ public class GameplayServerServerStartedState : State
     {
         var newPlayer = Object.Instantiate(original: _gameplayServerContext.PlayerPrefab, position: position, rotation: Quaternion.identity);
         newPlayer.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
-        newPlayer.Setup(clientId, playerName);
+        newPlayer.Setup(clientId, playerName); //server side update (not needed when host with no graphics)
         newPlayer.SetupClientRpc(clientId, playerName);
+    }
+
+    private void OnPlayerReadySignal(int readyPlayers)
+    {
+        Debug.Log($"readyPlayers: {readyPlayers}");
+        if (readyPlayers == _gameplayServerContext.TargetNumberOfPlayers)
+        {
+            _stateManager.TransitTo(new GameplayServerBeginGameplayCountDownState(_stateManager, _gameplayServerContext));
+        }
     }
 }

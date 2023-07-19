@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Threading.Tasks;
 using CountTo100.Utilities;
+using System;
 
 public class GameplayClientStateManager : StateManager
 {
@@ -12,17 +13,20 @@ public class GameplayClientStateManager : StateManager
         public GameplaySceneManager GameplaySceneManager;
         public NetworkManager NetworkManager;
         public UnityTransport Transport;
+        public ulong ClientId;
 
-        public GameplayClientContext(GameplaySceneManager gameplaySceneManager, NetworkManager networkManager, UnityTransport transport)
+        public GameplayClientContext(GameplaySceneManager gameplaySceneManager, NetworkManager networkManager, UnityTransport transport, ulong clientId)
         {
             GameplaySceneManager = gameplaySceneManager;
             NetworkManager = networkManager;
             Transport = transport;
+            ClientId = clientId;
         }
     }
 
     private NetworkManager _networkManager;
     private UnityTransport _transport;
+    private ulong _clientId;
 
     public async Task InitializeAndStart()
     {
@@ -36,6 +40,7 @@ public class GameplayClientStateManager : StateManager
         Debug.Assert(_networkManager != null);
         _transport = _networkManager.GetComponent<UnityTransport>();
         Debug.Assert(_transport != null);
+        _networkManager.OnClientConnectedCallback += OnClientConnected;
         _networkManager.OnClientDisconnectCallback += OnClientDisconnected;
         _transport.SetConnectionData("127.0.0.1", 7777); //TODO: not hardcoded
         _networkManager.NetworkConfig.ConnectionData = System.Text.Encoding.ASCII.GetBytes("TestPlayerName"); //TODO: get from text input
@@ -47,10 +52,16 @@ public class GameplayClientStateManager : StateManager
                 gameplayClientContext: new GameplayClientContext(
                     gameplaySceneManager: GameplaySceneManager.Instance,
                     networkManager: _networkManager,
-                    transport: _transport
+                    transport: _transport,
+                    clientId: _clientId
                 )
             )
         );
+    }
+
+    private void OnClientConnected(ulong clientId)
+    {
+        _clientId = clientId;
     }
 
     private void OnClientDisconnected(ulong clientId)

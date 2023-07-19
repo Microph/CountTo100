@@ -4,12 +4,14 @@ using UnityEngine;
 using System.Collections.Generic;
 using CountTo100.Utilities;
 using System.Threading.Tasks;
+using System;
+using System.Linq;
 
 public class GameplayServerStateManager : NetworkStateManager
 {
     public class GameplayServerContext
     {
-        GameplaySceneManager GameplaySceneManager;
+        public GameplaySceneManager GameplaySceneManager;
         public NetworkManager NetworkManager;
         public int TargetNumberOfPlayers;
         public Dictionary<ulong, PlayerData> ConnectedPlayerDataDict;
@@ -27,6 +29,7 @@ public class GameplayServerStateManager : NetworkStateManager
         }
     }
 
+    public event Action<int> OnPlayerReadySignal;
     public NetworkVariable<int> NVCurrentScore = new NetworkVariable<int>(k_defaultScore);
     
     [SerializeField] private Player _playerPrefab;
@@ -38,6 +41,40 @@ public class GameplayServerStateManager : NetworkStateManager
     private UnityTransport _transport;
     private int _targetNumberOfPlayers;
     private Dictionary<ulong, PlayerData> _connectedPlayerDataDict = new Dictionary<ulong, PlayerData>();
+
+    [ServerRpc(RequireOwnership = false)]
+    public void TestAddCurrentScoreServerRpc()
+    {
+        NVCurrentScore.Value++;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void OnPlayerCountServerRpc(ulong clientId)
+    {
+        //TODO also check 5 times/sec
+        if (CurrentStateEnum != Enums.State.GameplayServer_AllowCounting)
+        {
+            return;
+        }
+
+        NVCurrentScore.Value++;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void PlayerReadySignalServerRpc(ulong clientId)
+    {
+        if(!_connectedPlayerDataDict.ContainsKey(clientId))
+        {
+            return;
+        }
+        else if (_connectedPlayerDataDict[clientId].ReadyStatus) 
+        {
+            return;
+        }
+
+        _connectedPlayerDataDict[clientId].ReadyStatus = true;
+        OnPlayerReadySignal?.Invoke(_connectedPlayerDataDict.Sum(x => x.Value.ReadyStatus ? 1 : 0));
+    }
 
     public async Task InitializeAndStart()
     {
@@ -71,24 +108,6 @@ public class GameplayServerStateManager : NetworkStateManager
         );
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    public void TestAddCurrentScoreServerRpc()
-    {
-        NVCurrentScore.Value ++;
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    public void OnPlayerCountServerRpc(ulong clientId)
-    {
-        //TODO also check 5 times/sec
-        if (CurrentStateEnum != Enums.State.GameplayServer_AllowCounting)
-        {
-            return;
-        }
-
-        NVCurrentScore.Value ++;
-    }
-
     private void ConnectionApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
     {
         var clientId = request.ClientNetworkId;
@@ -103,4 +122,5 @@ public class GameplayServerStateManager : NetworkStateManager
             response.Reason = "Reached maximum number of players";
         }
     }
+
 }
