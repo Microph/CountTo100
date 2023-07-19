@@ -61,6 +61,9 @@ public class GameplayServerAllowCountingState : State
         _gameplayServerContext.ConnectedPlayerDataDict[clientId].CumulativeClicks++;
         _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.NVCurrentScore.Value++;
         _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.NVLatestClickerId.Value = clientId;
-        //TODO check winner
+        if(_gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.NVCurrentScore.Value == 100)
+        {
+            _stateManager.TransitTo(new GameplayServerEndGameState(_stateManager, _gameplayServerContext));
+        }
     }
 }

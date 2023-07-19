@@ -99,6 +99,19 @@ public class GameplayServerStateManager : NetworkStateManager
         );
     }
 
+    public string GetPlayerName(ulong clientId)
+    {
+        _connectedPlayerDataDict.TryGetValue(clientId, out PlayerData playerData);
+        if(playerData != null)
+        {
+            return playerData.PlayerName;
+        }
+        else
+        {
+            return string.Empty;
+        }
+    }
+
     private void ConnectionApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
     {
         var clientId = request.ClientNetworkId;

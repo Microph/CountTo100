@@ -40,6 +40,8 @@ public class GameplayServerServerStartedState : State
 
     public override void OnExit()
     {
+        _gameplayServerContext.NetworkManager.OnClientConnectedCallback -= OnClientConnected;
+        _gameplayServerContext.NetworkManager.OnClientDisconnectCallback -= OnClientDisconnected;
         _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.OnPlayerReadySignal -= OnPlayerReadySignal;
     }
 
@@ -52,8 +54,6 @@ public class GameplayServerServerStartedState : State
     private void OnClientDisconnected(ulong clientId)
     {
         _gameplayServerContext.ConnectedPlayerDataDict.Remove(clientId);
-        Debug.Log($"Disconnected client ID: {clientId}");
-        Debug.Log($"Disconnect reason: {_gameplayServerContext.NetworkManager.DisconnectReason}");
     }
 
     private void SpawnPlayer(ulong clientId, string playerName, Vector3 position)

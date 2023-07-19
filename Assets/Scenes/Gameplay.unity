@@ -1042,7 +1042,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '{PlayerName} counted to'
+  m_text: '{0} (ID: {1})counted to
+
+    100'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1072,9 +1074,9 @@ MonoBehaviour:
   m_fontSize: 80
   m_fontSizeBase: 80
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 16
+  m_fontSizeMax: 80
   m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -1333,6 +1335,8 @@ MonoBehaviour:
   NVCurrentStateEnum:
     m_InternalValue: 0
   NVCurrentScore:
+    m_InternalValue: 0
+  NVLatestClickerId:
     m_InternalValue: 0
   _playerPrefab: {fileID: 2069390569981613517, guid: 8951a06787bd2174ebe31458271d1fbf, type: 3}
   _playerPositionTransforms:

@@ -1,7 +1,8 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
 
-public  class GameplayUIManager : MonoBehaviour
+public class GameplayUIManager : MonoBehaviour
 {
     [SerializeField] private TMP_Text _waitingForPlayerText;
     [SerializeField] private TMP_Text _countDownStartGameplayText;
@@ -42,5 +43,16 @@ public  class GameplayUIManager : MonoBehaviour
     public void UpdateGameplayScoreText(int newValue)
     {
         _currentGameplayScoreText.text = newValue.ToString();
+    }
+
+    public void ShowWinnerText()
+    {
+        HideAll();
+        _winnerText.gameObject.SetActive(true);
+    }
+
+    public void SetWinnerText(string playerName, ulong clientId)
+    {
+        _winnerText.text = $"{playerName} (ID: {clientId}) counted to\n100";
     }
 }
