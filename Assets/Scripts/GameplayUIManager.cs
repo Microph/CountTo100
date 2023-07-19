@@ -12,11 +12,11 @@ public  class GameplayUIManager : MonoBehaviour
     private GameplayClientStateManager _gameplayClientStateManager;
 
     //reflect changes on client-side only
-    public void Initialize(GameplayClientStateManager gameplayServerStateManager)
+    public void Initialize(GameplayClientStateManager gameplayClientStateManager)
     {
-        _gameplayClientStateManager = gameplayServerStateManager;
+        _gameplayClientStateManager = gameplayClientStateManager;
         _gameplayClientStateManager.OnGameplayClientStateChanged += OnGameplayClientStateChanged;
-        //_gameplayClientStateManager.CurrentScore.OnValueChanged += OnCurrentScoreValueChanged;
+        //TODO: _gameplayClientStateManager.CurrentScore.OnValueChanged += OnCurrentScoreValueChanged;
     }
 
     private void OnGameplayClientStateChanged(Enums.State previousState, Enums.State newState)
