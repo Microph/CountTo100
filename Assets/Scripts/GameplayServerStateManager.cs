@@ -30,7 +30,7 @@ public class GameplayServerStateManager : NetworkStateManager
         }
     }
 
-    public event Action<int> OnPlayerReadySignal;
+    public event Action<int> OnPlayerReady;
     public event Action<ulong> OnPlayerCount;
     public NetworkVariable<int> NVCurrentScore = new NetworkVariable<int>();
     public NetworkVariable<ulong> NVLatestClickerId = new NetworkVariable<ulong>();
@@ -89,7 +89,7 @@ public class GameplayServerStateManager : NetworkStateManager
         }
     }
 
-    public void PlayerReadySignal(ulong clientId)
+    public void PlayerReady(ulong clientId)
     {
         if (!_connectedPlayerDataDict.ContainsKey(clientId))
         {
@@ -101,7 +101,7 @@ public class GameplayServerStateManager : NetworkStateManager
         }
 
         _connectedPlayerDataDict[clientId].ReadyStatus = true;
-        OnPlayerReadySignal?.Invoke(_connectedPlayerDataDict.Sum(x => x.Value.ReadyStatus ? 1 : 0));
+        OnPlayerReady?.Invoke(_connectedPlayerDataDict.Sum(x => x.Value.ReadyStatus ? 1 : 0));
     }
 
     public void PlayerCount(ulong clientId)

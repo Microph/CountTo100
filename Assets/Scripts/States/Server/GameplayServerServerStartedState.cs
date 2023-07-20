@@ -35,14 +35,14 @@ public class GameplayServerServerStartedState : State
     {
         _gameplayServerContext.NetworkManager.OnClientConnectedCallback += OnClientConnected;
         _gameplayServerContext.NetworkManager.OnClientDisconnectCallback += OnClientDisconnected;
-        _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.OnPlayerReadySignal += OnPlayerReadySignal;
+        _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.OnPlayerReady += OnPlayerReady;
     }
 
     public override void OnExit()
     {
         _gameplayServerContext.NetworkManager.OnClientConnectedCallback -= OnClientConnected;
         _gameplayServerContext.NetworkManager.OnClientDisconnectCallback -= OnClientDisconnected;
-        _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.OnPlayerReadySignal -= OnPlayerReadySignal;
+        _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.OnPlayerReady -= OnPlayerReady;
     }
 
     private void OnClientConnected(ulong clientId)
@@ -63,7 +63,7 @@ public class GameplayServerServerStartedState : State
         newPlayer.Setup(_gameplayServerContext.GameplaySceneManager.GameplayServerStateManager, clientId, playerName);
     }
 
-    private void OnPlayerReadySignal(int readyPlayers)
+    private void OnPlayerReady(int readyPlayers)
     {
         Debug.Log($"readyPlayers: {readyPlayers}");
         if (readyPlayers == _gameplayServerContext.TargetNumberOfPlayers)

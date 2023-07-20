@@ -17,9 +17,9 @@ public class PlayerObject : NetworkBehaviour
     private GameplayServerStateManager _gameplayServerStateManager;
 
     [ServerRpc]
-    public void PlayerReadySignalServerRpc()
+    public void PlayerReadyServerRpc()
     {
-        _gameplayServerStateManager.PlayerReadySignal(OwnerClientId);
+        _gameplayServerStateManager.PlayerReady(OwnerClientId);
     }
 
     [ServerRpc]
