@@ -58,6 +58,7 @@ public class GameplayServerStateManager : NetworkStateManager
         Debug.Assert(_transport != null);
         _targetNumberOfPlayers = GlobalServerConfigManager.LocalServerAllocationPayload.numberOfPlayers;
         _networkManager.ConnectionApprovalCallback = ConnectionApprovalCheck;
+        _networkManager.OnClientDisconnectCallback += OnClientDisconnected;
         _transport.SetConnectionData("127.0.0.1", 7777); //TODO: not hardcoded
         _networkManager.StartServer();
         await TaskHelper.When(() => IsServer && IsSpawned);
@@ -124,4 +125,8 @@ public class GameplayServerStateManager : NetworkStateManager
         }
     }
 
+    private void OnClientDisconnected(ulong clientId)
+    {
+        Debug.Log($"ClientId: {clientId} disconnect reason: {_networkManager.DisconnectReason}");
+    }
 }

@@ -48,7 +48,6 @@ public class GameplayServerServerStartedState : State
     private void OnClientConnected(ulong clientId)
     {
         SpawnPlayer(clientId, _gameplayServerContext.ConnectedPlayerDataDict[clientId].PlayerName, _gameplayServerContext.PlayerPositionTransforms[_gameplayServerContext.ConnectedPlayerDataDict.Count - 1].position);
-        //TODO assign Player ref to client
     }
 
     private void OnClientDisconnected(ulong clientId)
