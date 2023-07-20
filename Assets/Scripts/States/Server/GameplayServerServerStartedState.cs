@@ -60,7 +60,7 @@ public class GameplayServerServerStartedState : State
     {
         var newPlayer = Object.Instantiate(original: _gameplayServerContext.PlayerPrefab, position: position, rotation: Quaternion.identity);
         newPlayer.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
-        newPlayer.SetupServerRpc(clientId, playerName);
+        newPlayer.Setup(_gameplayServerContext.GameplaySceneManager.GameplayServerStateManager, clientId, playerName);
     }
 
     private void OnPlayerReadySignal(int readyPlayers)

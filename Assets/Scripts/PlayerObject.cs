@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
+//main class for NetworkManager.LocalClient.PlayerObject
 public class PlayerObject : NetworkBehaviour
 {
     public NetworkVariable<ulong> NVClientId = new NetworkVariable<ulong>();
@@ -13,9 +14,23 @@ public class PlayerObject : NetworkBehaviour
     [SerializeField] private GameObject _winnerSpriteGameObject;
     [SerializeField] private TMP_Text _playerNameText;
 
+    private GameplayServerStateManager _gameplayServerStateManager;
+
     [ServerRpc]
-    public void SetupServerRpc(ulong clientId, string playerName)
+    public void PlayerReadySignalServerRpc()
     {
+        _gameplayServerStateManager.PlayerReadySignal(OwnerClientId);
+    }
+
+    [ServerRpc]
+    public void PlayerCountServerRpc()
+    {
+        _gameplayServerStateManager.PlayerCount(OwnerClientId);
+    }
+
+    public void Setup(GameplayServerStateManager gameplayServerStateManager, ulong clientId, string playerName)
+    {
+        _gameplayServerStateManager = gameplayServerStateManager;
         NVClientId.Value = clientId;
         NVPlayerName.Value = playerName;
     }

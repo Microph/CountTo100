@@ -58,6 +58,6 @@ public class GameplayClientAllowCountingState : State
 
     private void PlayerClickAction()
     {
-        _gameplayClientContext.GameplaySceneManager.GameplayServerStateManager.PlayerCountServerRpc(_gameplayClientContext.NetworkManager.LocalClientId);
+        _gameplayClientContext.PlayerObject.PlayerCountServerRpc();
     }
 }

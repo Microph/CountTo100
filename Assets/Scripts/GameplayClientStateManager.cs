@@ -12,12 +12,14 @@ public class GameplayClientStateManager : StateManager
         public GameplaySceneManager GameplaySceneManager;
         public NetworkManager NetworkManager;
         public UnityTransport Transport;
+        public PlayerObject PlayerObject;
 
-        public GameplayClientContext(GameplaySceneManager gameplaySceneManager, NetworkManager networkManager, UnityTransport transport)
+        public GameplayClientContext(GameplaySceneManager gameplaySceneManager, NetworkManager networkManager, UnityTransport transport, PlayerObject playerObject)
         {
             GameplaySceneManager = gameplaySceneManager;
             NetworkManager = networkManager;
             Transport = transport;
+            PlayerObject = playerObject;
         }
     }
 
@@ -40,14 +42,15 @@ public class GameplayClientStateManager : StateManager
         _transport.SetConnectionData("127.0.0.1", 7777); //TODO: not hardcoded
         _networkManager.NetworkConfig.ConnectionData = System.Text.Encoding.ASCII.GetBytes("TestPlayerName"); //TODO: get from text input
         _networkManager.StartClient();
-        await TaskHelper.When(() => _networkManager.IsConnectedClient);
-        Debug.Log("Client is connected!");
+        await TaskHelper.When(() => _networkManager.IsConnectedClient && _networkManager.LocalClient.PlayerObject != null);
+        Debug.Log("Client is connected and player object is spawned!");
         SetState(new GameplayClientClientStartedState(
                 stateManager: this,
                 gameplayClientContext: new GameplayClientContext(
                     gameplaySceneManager: GameplaySceneManager.Instance,
                     networkManager: _networkManager,
-                    transport: _transport
+                    transport: _transport,
+                    playerObject: _networkManager.LocalClient.PlayerObject.GetComponent<PlayerObject>()
                 )
             )
         );

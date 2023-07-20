@@ -44,28 +44,6 @@ public class GameplayServerStateManager : NetworkStateManager
     private int _targetNumberOfPlayers;
     private Dictionary<ulong, PlayerData> _connectedPlayerDataDict = new Dictionary<ulong, PlayerData>();
 
-    [ServerRpc(RequireOwnership = false)]
-    public void PlayerReadySignalServerRpc(ulong clientId)
-    {
-        if(!_connectedPlayerDataDict.ContainsKey(clientId))
-        {
-            return;
-        }
-        else if (_connectedPlayerDataDict[clientId].ReadyStatus) 
-        {
-            return;
-        }
-
-        _connectedPlayerDataDict[clientId].ReadyStatus = true;
-        OnPlayerReadySignal?.Invoke(_connectedPlayerDataDict.Sum(x => x.Value.ReadyStatus ? 1 : 0));
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    public void PlayerCountServerRpc(ulong clientId)
-    {
-        OnPlayerCount?.Invoke(clientId);
-    }
-
     public async Task InitializeAndStart()
     {
         if(!GlobalServerConfigManager.IsServer)
@@ -109,6 +87,26 @@ public class GameplayServerStateManager : NetworkStateManager
         {
             return string.Empty;
         }
+    }
+
+    public void PlayerReadySignal(ulong clientId)
+    {
+        if (!_connectedPlayerDataDict.ContainsKey(clientId))
+        {
+            return;
+        }
+        else if (_connectedPlayerDataDict[clientId].ReadyStatus)
+        {
+            return;
+        }
+
+        _connectedPlayerDataDict[clientId].ReadyStatus = true;
+        OnPlayerReadySignal?.Invoke(_connectedPlayerDataDict.Sum(x => x.Value.ReadyStatus ? 1 : 0));
+    }
+
+    public void PlayerCount(ulong clientId)
+    {
+        OnPlayerCount?.Invoke(clientId);
     }
 
     private void ConnectionApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
