@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using Unity.Collections;
 using Unity.Netcode;
@@ -13,6 +14,7 @@ public class PlayerObject : NetworkBehaviour
     [SerializeField] private SpriteRenderer _playerSpriteRenderer;
     [SerializeField] private GameObject _winnerSpriteGameObject;
     [SerializeField] private TMP_Text _playerNameText;
+    [SerializeField] private ParticleSystem _plus1Particle;
 
     private GameplayServerStateManager _gameplayServerStateManager;
 
@@ -28,6 +30,12 @@ public class PlayerObject : NetworkBehaviour
         _gameplayServerStateManager.PlayerCount(OwnerClientId);
     }
 
+    [ClientRpc]
+    public void EmitPlus1ClientRpc()
+    {
+        _plus1Particle.Emit(1);
+    }
+
     public void Setup(
         GameplayServerStateManager gameplayServerStateManager, 
         ulong clientId, 
@@ -36,6 +44,7 @@ public class PlayerObject : NetworkBehaviour
     )
     {
         _gameplayServerStateManager = gameplayServerStateManager;
+        _gameplayServerStateManager.NVLatestClickerId.OnValueChanged += OnLatestClickerIdChangedClientRpc;
         NVClientId.Value = clientId;
         NVPlayerName.Value = playerName;
         NVPlayerColor.Value = playerColor;
@@ -53,7 +62,24 @@ public class PlayerObject : NetworkBehaviour
     {
         NVPlayerName.OnValueChanged -= OnNVPlayerNameChanged;
         NVPlayerColor.OnValueChanged -= OnNVPlayerColorChanged;
+        if( _gameplayServerStateManager != null )
+        {
+            _gameplayServerStateManager.NVLatestClickerId.OnValueChanged -= OnLatestClickerIdChangedClientRpc;
+        }
         base.OnDestroy();
+    }
+
+    [ClientRpc]
+    private void OnLatestClickerIdChangedClientRpc(ulong _, ulong clientId)
+    {
+        if (clientId == OwnerClientId)
+        {
+            _playerSpriteRenderer.transform.localScale = Vector3.one * 1.25f;
+        }
+        else
+        {
+            _playerSpriteRenderer.transform.localScale = Vector3.one;
+        }
     }
 
     private void RefreshVisual()

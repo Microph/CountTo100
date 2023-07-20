@@ -69,7 +69,7 @@ public class GameplayServerServerStartedState : State
         Vector3 position
     )
     {
-        var newPlayer = Object.Instantiate(original: _gameplayServerContext.PlayerPrefab, position: position, rotation: Quaternion.identity);
+        PlayerObject newPlayer = Object.Instantiate(original: _gameplayServerContext.PlayerPrefab, position: position, rotation: Quaternion.identity);
         newPlayer.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
         newPlayer.Setup(
             gameplayServerStateManager: gameplayServerStateManager, 
@@ -77,6 +77,7 @@ public class GameplayServerServerStartedState : State
             playerName: playerName,
             playerColor: playerColor
         );
+        _gameplayServerContext.ConnectedPlayerDataDict[clientId].PlayerObject = newPlayer;
     }
 
     private void OnPlayerReady(int readyPlayers)

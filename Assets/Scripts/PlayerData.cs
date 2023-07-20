@@ -8,6 +8,7 @@ public class PlayerData
     public bool ReadyStatus;
     public int CumulativeClicks;
     public float CumulativeClicksResetTimer;
+    public PlayerObject PlayerObject;
 
     public PlayerData(ulong clientId, string playerName, Color playerColor)
     {
@@ -17,5 +18,6 @@ public class PlayerData
         this.CumulativeClicks = 0;
         this.CumulativeClicksResetTimer = 0;
         this.PlayerColor = playerColor;
+        this.PlayerObject = null;
     }
 }
