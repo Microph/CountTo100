@@ -61,6 +61,7 @@ public class GameplayServerAllowCountingState : State
         _gameplayServerContext.ConnectedPlayerDataDict[clientId].CumulativeClicks++;
         _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.NVCurrentScore.Value++;
         _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.NVLatestClickerId.Value = clientId;
+        //TODO: spawn +1 particle and enlarge player object
         if (_gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.NVCurrentScore.Value == 100)
         {
             _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.NVWinnerClickerName.Value = _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.GetPlayerName(clientId);
