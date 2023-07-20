@@ -1,3 +1,4 @@
+using CountTo100.Utilities;
 using System;
 using TMPro;
 using Unity.Collections;
@@ -36,6 +37,12 @@ public class PlayerObject : NetworkBehaviour
         _plus1Particle.Emit(1);
     }
 
+    [ClientRpc]
+    public void ShowWinnerSpriteClientRpc()
+    {
+        _winnerSpriteGameObject.SetActive(true);
+    }
+
     public void Setup(
         GameplayServerStateManager gameplayServerStateManager, 
         ulong clientId, 
@@ -45,6 +52,7 @@ public class PlayerObject : NetworkBehaviour
     {
         _gameplayServerStateManager = gameplayServerStateManager;
         _gameplayServerStateManager.NVLatestClickerId.OnValueChanged += OnLatestClickerIdChangedClientRpc;
+        _gameplayServerStateManager.NVCurrentStateEnum.OnValueChanged += OnGameplayServerStateChangedClientRpc;
         NVClientId.Value = clientId;
         NVPlayerName.Value = playerName;
         NVPlayerColor.Value = playerColor;
@@ -65,6 +73,7 @@ public class PlayerObject : NetworkBehaviour
         if( _gameplayServerStateManager != null )
         {
             _gameplayServerStateManager.NVLatestClickerId.OnValueChanged -= OnLatestClickerIdChangedClientRpc;
+            _gameplayServerStateManager.NVCurrentStateEnum.OnValueChanged -= OnGameplayServerStateChangedClientRpc;
         }
         base.OnDestroy();
     }
@@ -77,6 +86,15 @@ public class PlayerObject : NetworkBehaviour
             _playerSpriteRenderer.transform.localScale = Vector3.one * 1.25f;
         }
         else
+        {
+            _playerSpriteRenderer.transform.localScale = Vector3.one;
+        }
+    }
+
+    [ClientRpc]
+    private void OnGameplayServerStateChangedClientRpc(Enums.State _, Enums.State newState)
+    {
+        if(newState == Enums.State.GameplayServer_EndGame)
         {
             _playerSpriteRenderer.transform.localScale = Vector3.one;
         }

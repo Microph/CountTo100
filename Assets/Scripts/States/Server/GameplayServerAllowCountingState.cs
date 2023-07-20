@@ -65,6 +65,7 @@ public class GameplayServerAllowCountingState : State
         if (_gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.NVCurrentScore.Value == 100)
         {
             _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.NVWinnerClickerName.Value = _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.GetPlayerName(clientId);
+            _gameplayServerContext.ConnectedPlayerDataDict[clientId].PlayerObject.ShowWinnerSpriteClientRpc();
             _stateManager.TransitTo(new GameplayServerEndGameState(_stateManager, _gameplayServerContext));
         }
     }
