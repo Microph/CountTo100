@@ -38,7 +38,8 @@ public class GameplayServerStateManager : NetworkStateManager
     
     [SerializeField] private PlayerObject _playerPrefab;
     [SerializeField] private Transform[] _playerPositionTransforms;
-    
+    [SerializeField] private Color[] _playerColorByOrder;
+
     private NetworkManager _networkManager;
     private UnityTransport _transport;
     private int _targetNumberOfPlayers;
@@ -112,10 +113,11 @@ public class GameplayServerStateManager : NetworkStateManager
 
     private void ConnectionApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
     {
-        var clientId = request.ClientNetworkId;
+        ulong clientId = request.ClientNetworkId;
+        int connectedPlayerCount = _connectedPlayerDataDict.Count;
         if (_connectedPlayerDataDict.Count < _targetNumberOfPlayers)
         {
-            _connectedPlayerDataDict.Add(clientId, new PlayerData(clientId, System.Text.Encoding.ASCII.GetString(request.Payload)));
+            _connectedPlayerDataDict.Add(clientId, new PlayerData(clientId, System.Text.Encoding.ASCII.GetString(request.Payload), _playerColorByOrder[connectedPlayerCount]));
             response.Approved = true;
         }
         else

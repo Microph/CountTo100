@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using Unity.Collections;
 using Unity.Netcode;
@@ -8,8 +9,8 @@ public class PlayerObject : NetworkBehaviour
 {
     public NetworkVariable<ulong> NVClientId = new NetworkVariable<ulong>();
     public NetworkVariable<FixedString64Bytes> NVPlayerName = new NetworkVariable<FixedString64Bytes>();
-    //TODO: color
-
+    public NetworkVariable<Color> NVPlayerColor = new NetworkVariable<Color>();
+    
     [SerializeField] private SpriteRenderer _playerSpriteRenderer;
     [SerializeField] private GameObject _winnerSpriteGameObject;
     [SerializeField] private TMP_Text _playerNameText;
@@ -28,11 +29,17 @@ public class PlayerObject : NetworkBehaviour
         _gameplayServerStateManager.PlayerCount(OwnerClientId);
     }
 
-    public void Setup(GameplayServerStateManager gameplayServerStateManager, ulong clientId, string playerName)
+    public void Setup(
+        GameplayServerStateManager gameplayServerStateManager, 
+        ulong clientId, 
+        string playerName,
+        Color playerColor
+    )
     {
         _gameplayServerStateManager = gameplayServerStateManager;
         NVClientId.Value = clientId;
         NVPlayerName.Value = playerName;
+        NVPlayerColor.Value = playerColor;
     }
 
     public override void OnNetworkSpawn()
@@ -40,21 +47,28 @@ public class PlayerObject : NetworkBehaviour
         base.OnNetworkSpawn();
         RefreshVisual();
         NVPlayerName.OnValueChanged += OnNVPlayerNameChanged;
+        NVPlayerColor.OnValueChanged += OnNVPlayerColorChanged;
     }
 
     public override void OnDestroy()
     {
         NVPlayerName.OnValueChanged -= OnNVPlayerNameChanged;
+        NVPlayerColor.OnValueChanged -= OnNVPlayerColorChanged;
         base.OnDestroy();
     }
 
     private void RefreshVisual()
     {
         _playerNameText.text = NVPlayerName.Value.ToString();
-        //TODO: color
+        _playerSpriteRenderer.color = NVPlayerColor.Value;
     }
 
     private void OnNVPlayerNameChanged(FixedString64Bytes _, FixedString64Bytes __)
+    {
+        RefreshVisual();
+    }
+
+    private void OnNVPlayerColorChanged(Color _, Color __)
     {
         RefreshVisual();
     }

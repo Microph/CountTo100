@@ -47,7 +47,13 @@ public class GameplayServerServerStartedState : State
 
     private void OnClientConnected(ulong clientId)
     {
-        SpawnPlayer(clientId, _gameplayServerContext.ConnectedPlayerDataDict[clientId].PlayerName, _gameplayServerContext.PlayerPositionTransforms[_gameplayServerContext.ConnectedPlayerDataDict.Count - 1].position);
+        SpawnPlayer(
+            gameplayServerStateManager: _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager,
+            clientId: clientId,
+            playerName: _gameplayServerContext.ConnectedPlayerDataDict[clientId].PlayerName,
+            playerColor: _gameplayServerContext.ConnectedPlayerDataDict[clientId].PlayerColor,
+            position: _gameplayServerContext.PlayerPositionTransforms[_gameplayServerContext.ConnectedPlayerDataDict.Count - 1].position
+        );
     }
 
     private void OnClientDisconnected(ulong clientId)
@@ -55,11 +61,22 @@ public class GameplayServerServerStartedState : State
         _gameplayServerContext.ConnectedPlayerDataDict.Remove(clientId);
     }
 
-    private void SpawnPlayer(ulong clientId, string playerName, Vector3 position)
+    private void SpawnPlayer(
+        GameplayServerStateManager gameplayServerStateManager, 
+        ulong clientId, 
+        string playerName, 
+        Color playerColor, 
+        Vector3 position
+    )
     {
         var newPlayer = Object.Instantiate(original: _gameplayServerContext.PlayerPrefab, position: position, rotation: Quaternion.identity);
         newPlayer.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
-        newPlayer.Setup(_gameplayServerContext.GameplaySceneManager.GameplayServerStateManager, clientId, playerName);
+        newPlayer.Setup(
+            gameplayServerStateManager: gameplayServerStateManager, 
+            clientId: clientId,
+            playerName: playerName,
+            playerColor: playerColor
+        );
     }
 
     private void OnPlayerReady(int readyPlayers)
