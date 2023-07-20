@@ -1,10 +1,5 @@
 using CountTo100.Utilities;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
-using Unity.Netcode;
-using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 
 public class GameplaySceneManager : MonoSingleton<GameplaySceneManager>

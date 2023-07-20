@@ -1,4 +1,5 @@
 ﻿using CountTo100.Utilities;
+using UnityEngine.SceneManagement;
 using static GameplayClientStateManager;
 
 public class GameplayClientEndGameState : State
@@ -20,7 +21,11 @@ public class GameplayClientEndGameState : State
     public override void OnEnter()
     {
         ulong winnerId = _gameplayClientContext.GameplaySceneManager.GameplayServerStateManager.NVLatestClickerId.Value;
-        _gameplayClientContext.GameplaySceneManager.GameplayUIManager.SetWinnerText(_gameplayClientContext.GameplaySceneManager.GameplayServerStateManager.NVWinnerClickerName.Value.ToString(), winnerId);
-        _gameplayClientContext.GameplaySceneManager.GameplayUIManager.ShowWinnerText();
+        _gameplayClientContext.GameplaySceneManager.GameplayUIManager.SetWinnerTextAndExitButtonAction(
+            playerName: _gameplayClientContext.GameplaySceneManager.GameplayServerStateManager.NVWinnerClickerName.Value.ToString(),
+            clientId: winnerId,
+            onExitButtonClickedAction: () => SceneManager.LoadScene("MainMenu") //TODO: back to the same lobby instead
+        );
+        _gameplayClientContext.GameplaySceneManager.GameplayUIManager.ShowWinnerTextAndExitButton();
     }
 }

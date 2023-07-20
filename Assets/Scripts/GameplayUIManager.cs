@@ -1,22 +1,33 @@
 ﻿using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameplayUIManager : MonoBehaviour
 {
+    [SerializeField] private Button _exitButton;
     [SerializeField] private TMP_Text _waitingForPlayerText;
     [SerializeField] private TMP_Text _countDownStartGameplayText;
     [SerializeField] private TMP_Text _currentGameplayScoreText;
     [SerializeField] private TMP_Text _winnerText;
 
+    private Action _onExitButtonClickedAction;
+    
+    private void Awake()
+    {
+        _exitButton.onClick.AddListener(OnExitButtonClicked);
+    }
+
     public void Initialize()
     {
+        _onExitButtonClickedAction = null;
         HideAll();
         _waitingForPlayerText.gameObject.SetActive(true);
     }
 
     public void HideAll()
     {
+        _exitButton.gameObject.SetActive(false);
         _waitingForPlayerText.gameObject.SetActive(false);
         _countDownStartGameplayText.gameObject.SetActive(false);
         _currentGameplayScoreText.gameObject.SetActive(false);
@@ -45,14 +56,21 @@ public class GameplayUIManager : MonoBehaviour
         _currentGameplayScoreText.text = newValue.ToString();
     }
 
-    public void ShowWinnerText()
+    public void ShowWinnerTextAndExitButton()
     {
         HideAll();
         _winnerText.gameObject.SetActive(true);
+        _exitButton.gameObject.SetActive(true);
     }
 
-    public void SetWinnerText(string playerName, ulong clientId)
+    public void SetWinnerTextAndExitButtonAction(string playerName, ulong clientId, Action onExitButtonClickedAction)
     {
         _winnerText.text = $"{playerName} (ID: {clientId}) counted to\n100";
+        _onExitButtonClickedAction = onExitButtonClickedAction;
+    }
+
+    private void OnExitButtonClicked()
+    {
+        _onExitButtonClickedAction?.Invoke();
     }
 }
