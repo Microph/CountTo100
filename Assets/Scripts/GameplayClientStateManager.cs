@@ -56,6 +56,14 @@ public class GameplayClientStateManager : StateManager
         );
     }
 
+    private void OnDestroy()
+    {
+        if (_networkManager != null) 
+        { 
+            _networkManager.OnClientDisconnectCallback -= OnClientDisconnected;
+        }
+    }
+
     private bool IsPlayerObjectSpawned(NetworkObject playerObject)
     {
         return playerObject != null && playerObject.IsSpawned;

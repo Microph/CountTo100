@@ -24,8 +24,15 @@ public class GameplayClientEndGameState : State
         _gameplayClientContext.GameplaySceneManager.GameplayUIManager.SetWinnerTextAndExitButtonAction(
             playerName: _gameplayClientContext.GameplaySceneManager.GameplayServerStateManager.NVWinnerClickerName.Value.ToString(),
             clientId: winnerId,
-            onExitButtonClickedAction: () => SceneManager.LoadScene("MainMenu") //TODO: back to the same lobby instead
+            onExitButtonClickedAction: OnExitButtonClickedAction 
         );
         _gameplayClientContext.GameplaySceneManager.GameplayUIManager.ShowWinnerTextAndExitButton();
+    }
+
+    private void OnExitButtonClickedAction()
+    {
+        //TODO: back to the same lobby instead
+        _gameplayClientContext.NetworkManager.Shutdown();
+        SceneManager.LoadScene("MainMenu");
     }
 }

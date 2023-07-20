@@ -78,6 +78,15 @@ public class GameplayServerStateManager : NetworkStateManager
         );
     }
 
+    public override void OnDestroy()
+    {
+        if (_networkManager != null)
+        {
+            _networkManager.OnClientDisconnectCallback -= OnClientDisconnected;
+        }
+        base.OnDestroy();
+    }
+
     public string GetPlayerName(ulong clientId)
     {
         _connectedPlayerDataDict.TryGetValue(clientId, out PlayerData playerData);

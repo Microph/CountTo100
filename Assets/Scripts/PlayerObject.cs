@@ -49,6 +49,13 @@ public class PlayerObject : NetworkBehaviour
         NVPlayerColor.OnValueChanged += OnNVPlayerColorChanged;
     }
 
+    public override void OnDestroy()
+    {
+        NVPlayerName.OnValueChanged -= OnNVPlayerNameChanged;
+        NVPlayerColor.OnValueChanged -= OnNVPlayerColorChanged;
+        base.OnDestroy();
+    }
+
     private void RefreshVisual()
     {
         _playerNameText.text = NVPlayerName.Value.ToString();
