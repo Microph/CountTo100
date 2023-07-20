@@ -22,7 +22,6 @@ public class GameplaySceneManager : MonoSingleton<GameplaySceneManager>
     protected override void Awake()
     {
         base.Awake();
-        _gameplayUIManager.Initialize();
     }
 
     private async void Start()
@@ -35,6 +34,7 @@ public class GameplaySceneManager : MonoSingleton<GameplaySceneManager>
             }
             else
             {
+                _gameplayUIManager.Initialize();
                 await _gameplayClientStateManager.InitializeAndStart();
             }
         }
