@@ -42,7 +42,7 @@ public class GameplayClientStateManager : StateManager
         _transport.SetConnectionData("127.0.0.1", 7777); //TODO: not hardcoded
         _networkManager.NetworkConfig.ConnectionData = System.Text.Encoding.ASCII.GetBytes("TestPlayerName"); //TODO: get from text input
         _networkManager.StartClient();
-        await TaskHelper.When(() => _networkManager.IsConnectedClient && _networkManager.LocalClient.PlayerObject != null);
+        await TaskHelper.When(() => _networkManager.IsConnectedClient && IsPlayerObjectSpawned(_networkManager.LocalClient.PlayerObject));
         Debug.Log("Client is connected and player object is spawned!");
         SetState(new GameplayClientClientStartedState(
                 stateManager: this,
@@ -54,6 +54,11 @@ public class GameplayClientStateManager : StateManager
                 )
             )
         );
+    }
+
+    private bool IsPlayerObjectSpawned(NetworkObject playerObject)
+    {
+        return playerObject != null && playerObject.IsSpawned;
     }
 
     private void OnClientDisconnected(ulong clientId)
