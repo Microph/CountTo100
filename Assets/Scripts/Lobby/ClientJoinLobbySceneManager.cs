@@ -1,30 +1,14 @@
 using System;
-using TMPro;
+using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ClientJoinLobbySceneManager : MonoBehaviour
 {
     [SerializeField] private LobbyManager _lobbyManager;
-    [SerializeField] private TMP_InputField _playerNameInputField;
-    [SerializeField] private Button _startButton;
+    [SerializeField] private ClientJoinLobbyUIManager _clientJoinLobbyUIManager;
 
     private void Awake()
     {
-        _startButton.onClick.AddListener(OnStartButtonClicked);
-    }
-
-    private async void OnStartButtonClicked()
-    {
-        _startButton.interactable = false;
-        try
-        {
-            await _lobbyManager.AuthenticateAndQuickJoinLobby(_playerNameInputField.text);
-        }
-        catch (Exception ex)
-        {
-            Debug.LogException(ex);
-            _startButton.interactable = true;
-        }
+        _clientJoinLobbyUIManager.Setup(_lobbyManager);
     }
 }
