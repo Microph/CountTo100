@@ -43,6 +43,7 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
         foreach(Player player in e.lobby.Players)
         {
             Debug.Log($"KEY_PLAYER_NAME: {player.Data[LobbyManager.KEY_PLAYER_NAME].Value}");
+            //TODO: poll for new joiner data (for first joiners)
         }
         ShowLobbyUIGroup();
     }
