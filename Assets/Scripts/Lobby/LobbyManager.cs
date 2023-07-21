@@ -18,6 +18,7 @@ public class LobbyManager : MonoBehaviour
     public event EventHandler<LobbyEventArgs> OnJoinedLobby;
 
     private string _playerName;
+    private Player _player;
     private Lobby _joinedLobby;
     private bool _isHandlingLobbyHeartbeat = false;
     private float _heartbeatTimer = 0;
@@ -35,6 +36,14 @@ public class LobbyManager : MonoBehaviour
     public bool IsLobbyHost()
     {
         return _joinedLobby != null && _joinedLobby.HostId == AuthenticationService.Instance.PlayerId;
+    }
+
+    private void Update()
+    {
+        if (IsLobbyHost() && !_isHandlingLobbyHeartbeat)
+        {
+            HandleLobbyHeartbeat();
+        }
     }
 
     private async void OnSignedIn()
@@ -67,6 +76,7 @@ public class LobbyManager : MonoBehaviour
     private async Task QuickJoinLobby()
     {
         QuickJoinLobbyOptions options = new QuickJoinLobbyOptions();
+        options.Player = GetPlayer();
         Lobby lobby = await LobbyService.Instance.QuickJoinLobbyAsync(options);
         _joinedLobby = lobby;
         OnJoinedLobby?.Invoke(this, new LobbyEventArgs { lobby = lobby });
@@ -75,13 +85,9 @@ public class LobbyManager : MonoBehaviour
 
     private async Task CreateAndJoinLobby(int maxPlayers)
     {
-        Player player = new Player(AuthenticationService.Instance.PlayerId, null, new Dictionary<string, PlayerDataObject> {
-            { KEY_PLAYER_NAME, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, _playerName) },
-        });
-
         CreateLobbyOptions options = new CreateLobbyOptions
         {
-            Player = player,
+            Player = GetPlayer(),
             IsPrivate = false
         };
 
@@ -91,12 +97,12 @@ public class LobbyManager : MonoBehaviour
         Debug.Log("Created and joined a lobby");
     }
 
-    private void Update()
+    private Player GetPlayer()
     {
-        if (IsLobbyHost() && !_isHandlingLobbyHeartbeat) 
-        { 
-            HandleLobbyHeartbeat(); 
-        }
+        _player ??= new Player(AuthenticationService.Instance.PlayerId, null, new Dictionary<string, PlayerDataObject> {
+            { KEY_PLAYER_NAME, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, _playerName) },
+        });
+        return _player;
     }
 
     private async void HandleLobbyHeartbeat()

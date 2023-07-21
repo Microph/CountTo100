@@ -1,6 +1,6 @@
 using System;
-using System.Threading.Tasks;
 using TMPro;
+using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -40,7 +40,10 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
 
     private void OnJoinedLobby(object sender, LobbyManager.LobbyEventArgs e)
     {
-        //TODO: setup lobby UI
+        foreach(Player player in e.lobby.Players)
+        {
+            Debug.Log($"KEY_PLAYER_NAME: {player.Data[LobbyManager.KEY_PLAYER_NAME].Value}");
+        }
         ShowLobbyUIGroup();
     }
 
