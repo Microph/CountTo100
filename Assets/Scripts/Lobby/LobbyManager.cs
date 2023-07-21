@@ -40,18 +40,18 @@ public class LobbyManager : MonoBehaviour
     private async void OnSignedIn()
     {
         AuthenticationService.Instance.SignedIn -= OnSignedIn;
-        bool getNoOpenedLobbyError = false;
+        bool getNoOpenLobbyError = false;
         try
         {
             await QuickJoinLobby();
         }
         catch (LobbyServiceException ex)
         {
-            getNoOpenedLobbyError = ex.ErrorCode == 16006;
+            getNoOpenLobbyError = ex.ErrorCode == 16006;
             Debug.LogException(ex);
         }
 
-        if(getNoOpenedLobbyError)
+        if(getNoOpenLobbyError)
         {
             try
             {
