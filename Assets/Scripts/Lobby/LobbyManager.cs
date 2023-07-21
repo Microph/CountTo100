@@ -19,6 +19,8 @@ public class LobbyManager : MonoBehaviour
 
     private string _playerName;
     private Lobby _joinedLobby;
+    private bool _isHandlingLobbyHeartbeat = false;
+    private float _heartbeatTimer = 0;
 
     public async Task AuthenticateAndQuickJoinLobby(string playerName)
     {
@@ -28,6 +30,11 @@ public class LobbyManager : MonoBehaviour
         await UnityServices.InitializeAsync(initializationOptions);
         AuthenticationService.Instance.SignedIn += OnSignedIn;
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
+    }
+
+    public bool IsLobbyHost()
+    {
+        return _joinedLobby != null && _joinedLobby.HostId == AuthenticationService.Instance.PlayerId;
     }
 
     private async void OnSignedIn()
@@ -82,5 +89,33 @@ public class LobbyManager : MonoBehaviour
         _joinedLobby = lobby;
         OnJoinedLobby?.Invoke(this, new LobbyEventArgs { lobby = lobby });
         Debug.Log("Created and joined a lobby");
+    }
+
+    private void Update()
+    {
+        if (IsLobbyHost() && !_isHandlingLobbyHeartbeat) 
+        { 
+            HandleLobbyHeartbeat(); 
+        }
+    }
+
+    private async void HandleLobbyHeartbeat()
+    {
+        _isHandlingLobbyHeartbeat = true;
+        _heartbeatTimer -= Time.deltaTime;
+        if (_heartbeatTimer <= 0f)
+        {
+            _heartbeatTimer = 15f;
+            Debug.Log("Heartbeat lobby");
+            try
+            {
+                await LobbyService.Instance.SendHeartbeatPingAsync(_joinedLobby.Id);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+            }
+        }
+        _isHandlingLobbyHeartbeat = false;
     }
 }
