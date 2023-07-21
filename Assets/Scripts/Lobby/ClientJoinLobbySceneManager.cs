@@ -27,7 +27,7 @@ public class ClientJoinLobbySceneManager : MonoBehaviour
         catch (Exception ex)
         {
             Debug.LogException(ex);
+            _startButton.interactable = true;
         }
-        _startButton.interactable = true;
     }
 }
