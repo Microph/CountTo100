@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class LobbyManager : MonoBehaviour 
 {
-    public async Task Authenticate(string playerName)
+    public async Task AuthenticateAndQuickJoinLobby(string playerName)
     {
         InitializationOptions initializationOptions = new InitializationOptions();
         initializationOptions.SetProfile(playerName);
@@ -17,6 +17,7 @@ public class LobbyManager : MonoBehaviour
 
     private void OnSignedIn()
     {
+        AuthenticationService.Instance.SignedIn -= OnSignedIn;
         throw new NotImplementedException();
         //TODO: quick join lobby
     }
