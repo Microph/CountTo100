@@ -7,8 +7,9 @@ using Unity.Services.Lobbies;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using CountTo100.Utilities;
 
-public class LobbyManager : MonoBehaviour
+public class LobbyManager : MonoSingleton<LobbyManager>
 {
     public const string KEY_PLAYER_NAME = "PlayerName";
     public const string KEY_PLAYER_READY_STATUS = "PlayerReadyStatus";
@@ -21,6 +22,7 @@ public class LobbyManager : MonoBehaviour
     public event EventHandler<LobbyEventArgs> OnJoinedLobby;
     public event EventHandler<LobbyEventArgs> OnJoinedLobbyUpdate;
 
+    public Lobby JoinedLobby => _joinedLobby;
     public int CurrentLocalStartGameplayTimes => _currentLocalStartGameplayTimes;
     
     private const float k_defaultLobbyHeartBeatTime = 15f;
@@ -146,14 +148,16 @@ public class LobbyManager : MonoBehaviour
         }
     }
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         OnJoinedLobbyUpdate += OnJoinedLobbyUpdateCallback;
     }
 
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
         OnJoinedLobbyUpdate -= OnJoinedLobbyUpdateCallback;
+        base.OnDestroy();
     }
 
     private async void OnApplicationQuit()

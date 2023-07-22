@@ -39,7 +39,7 @@ public class GameplayClientStateManager : StateManager
         _transport = _networkManager.GetComponent<UnityTransport>();
         Debug.Assert(_transport != null);
         _networkManager.OnClientDisconnectCallback += OnClientDisconnected;
-        _transport.SetConnectionData("127.0.0.1", 7777); //TODO: not hardcoded
+        _transport.SetConnectionData("127.0.0.1", 7777); //TODO: get value from LobbyManager singleton
         _networkManager.NetworkConfig.ConnectionData = System.Text.Encoding.ASCII.GetBytes("TestPlayerName"); //TODO: get from text input
         _networkManager.StartClient();
         await TaskHelper.When(() => _networkManager.IsConnectedClient && IsPlayerObjectSpawned(_networkManager.LocalClient.PlayerObject));
