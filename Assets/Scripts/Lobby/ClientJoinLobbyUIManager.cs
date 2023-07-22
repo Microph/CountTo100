@@ -77,6 +77,7 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
     private void OnStartGameButtonClicked()
     {
         throw new NotImplementedException();
+        //TODO: implement
     }
 
     private void OnJoinedLobby(object sender, LobbyManager.LobbyEventArgs e)
@@ -103,7 +104,7 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
             player.Data.TryGetValue(LobbyManager.KEY_PLAYER_NAME, out PlayerDataObject playerNameDataObject);
             player.Data.TryGetValue(LobbyManager.KEY_PLAYER_READY_STATUS, out PlayerDataObject playerReadyStatusDataObject);
             var newPlayerElement = Instantiate(_lobbyPlayerElementPrefab, _lobbyPlayerElementContentTransform);
-            newPlayerElement.Setup(playerNameDataObject?.Value, _lobbyManager.IsLobbyHost(player.Id), _lobbyManager.IsPlayerReady(playerReadyStatusDataObject));
+            newPlayerElement.Setup(playerNameDataObject?.Value, _lobbyManager.IsLobbyHost(player.Id), _lobbyManager.IsPlayerReady(player.Id, playerReadyStatusDataObject));
         }
 
         if (AuthenticationService.Instance != null)

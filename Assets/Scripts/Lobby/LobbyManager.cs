@@ -36,15 +36,15 @@ public class LobbyManager : MonoBehaviour
         return _joinedLobby != null && _joinedLobby.HostId == playerId;
     }
 
-    public bool IsPlayerReady(PlayerDataObject playerDataObject)
+    public bool IsPlayerReady(string playerId, PlayerDataObject playerReadyStatusDataObject)
     {
         //ignore ready status for host
-        if(AuthenticationService.Instance != null && IsLobbyHost(AuthenticationService.Instance.PlayerId))
+        if(AuthenticationService.Instance != null && IsLobbyHost(playerId))
         {
             return false;
         }
 
-        string playerReadyStatusValue = playerDataObject?.Value;
+        string playerReadyStatusValue = playerReadyStatusDataObject?.Value;
         return playerReadyStatusValue != null && playerReadyStatusValue.Equals("1");
     }
 
