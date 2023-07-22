@@ -52,7 +52,7 @@ public class LobbyManager : MonoBehaviour
     {
         if (players == null || players.Count <= 1)
         {
-            return false;
+            return true;
         }
 
         foreach (Player player in players)
@@ -103,7 +103,7 @@ public class LobbyManager : MonoBehaviour
         }
     }
 
-    public async Task StartGame()
+    public async Task StartGameplay(string serverIP, string serverPort)
     {
         await Task.Yield();
         //TODO send lobby public data -> server ip/port
@@ -255,5 +255,46 @@ public class LobbyManager : MonoBehaviour
         {
             Debug.LogException(ex);
         }
+    }
+
+    private void HostUpdateStartGameplayStatus()
+    {
+        /*
+        try
+        {
+            UpdateLobbyOptions options = new UpdateLobbyOptions();
+            options.Name = "testLobbyName";
+            options.MaxPlayers = 4;
+            options.IsPrivate = false;
+
+            //Ensure you sign-in before calling Authentication Instance
+            //See IAuthenticationService interface
+            options.HostId = AuthenticationService.Instance.PlayerId;
+
+            options.Data = new Dictionary<string, DataObject>()
+            {
+                {
+                    "ExamplePrivateData", new DataObject(
+                        visibility: DataObject.VisibilityOptions.Private,
+                        value: "PrivateData")
+                },
+                {
+                    "ExamplePublicData", new DataObject(
+                        visibility: DataObject.VisibilityOptions.Public,
+                        value: "PublicData",
+                        index: DataObject.IndexOptions.S1)
+                },
+            };
+
+            var lobby = await LobbyService.Instance.UpdateLobbyAsync("lobbyId", options);
+
+            //...
+        }
+        catch (LobbyServiceException e)
+        {
+            Debug.Log(e);
+        }
+        */
+        //TODO: implement
     }
 }

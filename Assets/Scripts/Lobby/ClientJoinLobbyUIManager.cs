@@ -1,5 +1,4 @@
 using System;
-using System.Net;
 using TMPro;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies.Models;
@@ -8,6 +7,8 @@ using UnityEngine.UI;
 
 public class ClientJoinLobbyUIManager : MonoBehaviour
 {
+    [SerializeField] private GameObject _startingGameplayUIOverlay;
+
     [Header("EnterPlayerNameUIGroup")]
     [SerializeField] private GameObject EnterPlayerNameUIGroup;
     [SerializeField] private TMP_InputField _playerNameInputField;
@@ -19,6 +20,11 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
     [SerializeField] private Transform _lobbyPlayerElementContentTransform;
     [SerializeField] private Button _readyButton;
     [SerializeField] private Button _startGameButton;
+
+    [Header("StartGameHostConfigUIGroup")]
+    [SerializeField] private GameObject _startGameHostConfigUIGroup;
+    [SerializeField] private TMP_InputField _serverIPInputField;
+    [SerializeField] private TMP_InputField _serverPortInputField;
 
     private LobbyManager _lobbyManager;
 
@@ -77,14 +83,16 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
     private async void OnStartGameButtonClicked()
     {
         _startGameButton.interactable = false;
+        _startingGameplayUIOverlay.SetActive(true);
         try
         {
-            await _lobbyManager.StartGame();
+            await _lobbyManager.StartGameplay(_serverIPInputField.text, _serverPortInputField.text);
         }
         catch (Exception ex)
         {
             Debug.LogException(ex);
             _startGameButton.interactable = true;
+            _startingGameplayUIOverlay.SetActive(false);
         }
     }
 
@@ -119,7 +127,7 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
         {
             if(AuthenticationService.Instance.PlayerId == lobby.HostId)
             {
-                ShowStartGameButton(_lobbyManager.AreAllPlayersReadyExceptHost(lobby.Players));
+                ShowStartGameUIGroup(_lobbyManager.AreAllPlayersReadyExceptHost(lobby.Players));
             }
             else
             {
@@ -128,17 +136,19 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
         }
     }
 
-    private void ShowStartGameButton(bool isAllPlayersReady)
+    private void ShowStartGameUIGroup(bool isAllPlayersReady)
     {
         _readyButton.gameObject.SetActive(false);
         _startGameButton.interactable = isAllPlayersReady;
         _startGameButton.gameObject.SetActive(true);
+        _startGameHostConfigUIGroup.SetActive(true);
     }
 
     private void ShowReadyButton()
     {
         _readyButton.gameObject.SetActive(true);
         _startGameButton.gameObject.SetActive(false);
+        _startGameHostConfigUIGroup.SetActive(false);
     }
 
     private void ShowEnterPlayerNameUIGroup()
