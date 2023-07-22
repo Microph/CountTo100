@@ -99,19 +99,12 @@ public class LobbyManager : MonoSingleton<LobbyManager>
         };
 
         string playerId = AuthenticationService.Instance.PlayerId;
-        try
-        {
-            Lobby lobby = await LobbyService.Instance.UpdatePlayerAsync(_joinedLobby.Id, playerId, options);
-            _joinedLobby = lobby;
-            OnJoinedLobbyUpdate?.Invoke(this, new LobbyEventArgs { lobby = _joinedLobby });
-        }
-        catch (LobbyServiceException ex)
-        {
-            Debug.LogException(ex);
-        }
+        Lobby lobby = await LobbyService.Instance.UpdatePlayerAsync(_joinedLobby.Id, playerId, options);
+        _joinedLobby = lobby;
+        OnJoinedLobbyUpdate?.Invoke(this, new LobbyEventArgs { lobby = _joinedLobby });
     }
 
-    public async Task UpdateHostStartGameplayTimes(string serverIP, string serverPort)
+    public async Task UpdateHostStartGameplayLobbyData(bool increaseHostStartGameplayTime, string serverIP, string serverPort)
     {
         if (_joinedLobby == null)
         {
@@ -131,21 +124,14 @@ public class LobbyManager : MonoSingleton<LobbyManager>
             {
                 KEY_HOST_START_GAMEPLAY_TIMES, new DataObject(
                     visibility: DataObject.VisibilityOptions.Member,
-                    value: (currentHostStartGameplayTimes + 1).ToString())
+                    value: (currentHostStartGameplayTimes + (increaseHostStartGameplayTime ? 1 : 0)).ToString())
             }
         };
-        //TODO: set server ip and port and use to connect in gameplay scene
 
-        try
-        {
-            var lobby = await LobbyService.Instance.UpdateLobbyAsync(_joinedLobby.Id, options);
-            _joinedLobby = lobby;
-            OnJoinedLobbyUpdate?.Invoke(this, new LobbyEventArgs { lobby = _joinedLobby });
-        }
-        catch (LobbyServiceException ex)
-        {
-            Debug.LogException(ex);
-        }
+        //TODO: set server ip and port and use to connect in gameplay scene
+        var lobby = await LobbyService.Instance.UpdateLobbyAsync(_joinedLobby.Id, options);
+        _joinedLobby = lobby;
+        OnJoinedLobbyUpdate?.Invoke(this, new LobbyEventArgs { lobby = _joinedLobby });
     }
 
     protected override void Awake()
@@ -162,7 +148,14 @@ public class LobbyManager : MonoSingleton<LobbyManager>
 
     private async void OnApplicationQuit()
     {
-        await LeaveCurrentLobby();
+        try
+        {
+            await LeaveCurrentLobby();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+        }
     }
 
     private void Update()
@@ -207,6 +200,18 @@ public class LobbyManager : MonoSingleton<LobbyManager>
             {
                 Debug.LogException(ex);
             }
+        }
+    }
+
+    private async void OnJoinedLobbyUpdateCallback(object sender, LobbyEventArgs e)
+    {
+        try
+        {
+            await CheckStartGameplay(e);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
         }
     }
 
@@ -300,17 +305,10 @@ public class LobbyManager : MonoSingleton<LobbyManager>
             return;
         }
 
-        try
-        {
-            await LobbyService.Instance.RemovePlayerAsync(_joinedLobby.Id, AuthenticationService.Instance.PlayerId);
-        }
-        catch (LobbyServiceException ex)
-        {
-            Debug.LogException(ex);
-        }
+        await LobbyService.Instance.RemovePlayerAsync(_joinedLobby.Id, AuthenticationService.Instance.PlayerId);
     }
 
-    private async void OnJoinedLobbyUpdateCallback(object sender, LobbyEventArgs e)
+    private async Task CheckStartGameplay(LobbyEventArgs e)
     {
         if (e.lobby.Data != null)
         {
@@ -318,17 +316,10 @@ public class LobbyManager : MonoSingleton<LobbyManager>
             int currentHostStartGameplayTimes = currentHostStartGameplayTimesDataObject == null ? 0 : int.Parse(currentHostStartGameplayTimesDataObject.Value);
             if (_currentLocalStartGameplayTimes < currentHostStartGameplayTimes)
             {
-                try
-                {
-                    //when a player finishes gameplay and go back to lobby, they should not be in ready state right away
-                    await UpdatePlayerReadyStatus(false);
-                    _currentLocalStartGameplayTimes++;
-                    SceneManager.LoadScene("Gameplay");
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogException(ex);
-                }
+                //when a player finishes gameplay and go back to lobby, they should not be in ready state right away
+                await UpdatePlayerReadyStatus(false);
+                _currentLocalStartGameplayTimes++;
+                SceneManager.LoadScene("Gameplay");
             }
         }
     }
