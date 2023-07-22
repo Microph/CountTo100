@@ -16,4 +16,9 @@ public class GameplayServerEndGameState : State
     {
         _gameplayServerContext = gameplayServerContext;
     }
+
+    public override void OnEnter()
+    {
+        _gameplayServerContext.GameplaySceneManager.GameplayUIManager.ShowServerInfo($"Server port: {_gameplayServerContext.Transport.ConnectionData.Port}\nGame is over. Please shutdown this server.");
+    }
 }
