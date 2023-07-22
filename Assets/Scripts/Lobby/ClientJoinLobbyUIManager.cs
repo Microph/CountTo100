@@ -8,9 +8,13 @@ using UnityEngine.UI;
 
 public class ClientJoinLobbyUIManager : MonoBehaviour
 {
-    [SerializeField] private GameObject EnterPlayerNameUIGroup, LobbyUIGroup;
+    [Header("EnterPlayerNameUIGroup")]
+    [SerializeField] private GameObject EnterPlayerNameUIGroup;
     [SerializeField] private TMP_InputField _playerNameInputField;
     [SerializeField] private Button _joinALobbyButton;
+
+    [Header("LobbyUIGroup")]
+    [SerializeField] private GameObject LobbyUIGroup;
     [SerializeField] private LobbyPlayerElement _lobbyPlayerElementPrefab;
     [SerializeField] private Transform _lobbyPlayerElementContentTransform;
     [SerializeField] private Button _readyButton;
@@ -25,7 +29,7 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
         _lobbyManager.OnJoinedLobbyUpdate += OnJoinedLobbyUpdate;
     }
 
-    public void OnDestroy()
+    private void OnDestroy()
     {
         if(_lobbyManager != null)
         {
@@ -37,6 +41,8 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
     private void Awake()
     {
         _joinALobbyButton.onClick.AddListener(OnJoinALobbyButtonClicked);
+        _readyButton.onClick.AddListener(OnReadyButtonClicked);
+        _startGameButton.onClick.AddListener(OnStartGameButtonClicked);
         ShowEnterPlayerNameUIGroup();
     }
 
@@ -52,6 +58,16 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
             Debug.LogException(ex);
             _joinALobbyButton.interactable = true;
         }
+    }
+
+    private void OnReadyButtonClicked()
+    {
+        throw new NotImplementedException();
+    }
+
+    private void OnStartGameButtonClicked()
+    {
+        throw new NotImplementedException();
     }
 
     private void OnJoinedLobby(object sender, LobbyManager.LobbyEventArgs e)
