@@ -74,10 +74,18 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
         }
     }
 
-    private void OnStartGameButtonClicked()
+    private async void OnStartGameButtonClicked()
     {
-        throw new NotImplementedException();
-        //TODO: implement
+        _startGameButton.interactable = false;
+        try
+        {
+            await _lobbyManager.StartGame();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            _startGameButton.interactable = true;
+        }
     }
 
     private void OnJoinedLobby(object sender, LobbyManager.LobbyEventArgs e)

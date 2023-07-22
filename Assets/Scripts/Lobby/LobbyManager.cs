@@ -48,6 +48,23 @@ public class LobbyManager : MonoBehaviour
         return playerReadyStatusValue != null && playerReadyStatusValue.Equals("1");
     }
 
+    public bool AreAllPlayersReadyExceptHost(List<Player> players)
+    {
+        if (players == null || players.Count <= 1)
+        {
+            return false;
+        }
+
+        foreach (Player player in players)
+        {
+            if (player.Id != _joinedLobby.HostId && !player.Data.ContainsKey(KEY_PLAYER_READY_STATUS))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public async Task AuthenticateAndQuickJoinLobby(string playerName)
     {
         _playerName = playerName;
@@ -86,21 +103,11 @@ public class LobbyManager : MonoBehaviour
         }
     }
 
-    public bool AreAllPlayersReadyExceptHost(List<Player> players)
+    public async Task StartGame()
     {
-        if (players == null || players.Count <= 1)
-        {
-            return false;
-        }
-
-        foreach (Player player in players)
-        {
-            if (player.Id != _joinedLobby.HostId && !player.Data.ContainsKey(KEY_PLAYER_READY_STATUS))
-            {
-                return false;
-            }
-        }
-        return true;
+        await Task.Yield();
+        //TODO send lobby public data -> server ip/port
+        //config gameplay data accordingly and load gameplay scene
     }
 
     private void Update()
