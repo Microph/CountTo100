@@ -26,6 +26,7 @@ public class LobbyManager : MonoSingleton<LobbyManager>
 
     public Lobby JoinedLobby => _joinedLobby;
     public int CurrentLocalStartGameplayTimes => _currentLocalStartGameplayTimes;
+    public string PlayerName => _playerName;
     
     private const float k_defaultLobbyHeartBeatTime = 15f;
     private const float k_defaultLobbyPollTime = 1.5f;

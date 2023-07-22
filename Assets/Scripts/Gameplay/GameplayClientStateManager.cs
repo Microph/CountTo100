@@ -35,12 +35,14 @@ public class GameplayClientStateManager : StateManager
             return;
         }
 
+        string playerName = "Player";
         string serverIP = "127.0.0.1";
         ushort serverPort = 7777;
         if (LobbyManager.Instance != null)
         {
             //in case a player leaves gameplay and go back to lobby, they should not be in ready state right away
             await LobbyManager.Instance.UpdatePlayerReadyStatus(false);
+            playerName = LobbyManager.Instance.PlayerName;
             LobbyManager.Instance.JoinedLobby.Data.TryGetValue(LobbyManager.KEY_GAMEPLAY_SERVER_IP, out DataObject serverIPDataObject);
             serverIP = serverIPDataObject?.Value;
             Debug.Log(serverIPDataObject?.Value);
@@ -55,7 +57,7 @@ public class GameplayClientStateManager : StateManager
         Debug.Assert(_transport != null);
         _networkManager.OnClientDisconnectCallback += OnClientDisconnected;
         _transport.SetConnectionData(serverIP, serverPort);
-        _networkManager.NetworkConfig.ConnectionData = System.Text.Encoding.ASCII.GetBytes("TestPlayerName"); //TODO: get from text input
+        _networkManager.NetworkConfig.ConnectionData = System.Text.Encoding.ASCII.GetBytes(playerName);
         _networkManager.StartClient();
         await TaskHelper.When(() => _networkManager.IsConnectedClient && IsPlayerObjectSpawned(_networkManager.LocalClient.PlayerObject));
         Debug.Log("Client is connected and player object is spawned!");
