@@ -190,8 +190,11 @@ public class LobbyManager : MonoSingleton<LobbyManager>
         }
         catch (LobbyServiceException ex)
         {
-            getNoOpenLobbyError = ex.ErrorCode == 16006;
-            Debug.LogException(ex);
+            getNoOpenLobbyError = ex.ErrorCode == 16006; //expect no open lobby error code
+            if(ex.ErrorCode != 16006)
+            {
+                Debug.LogException(ex);
+            }
         }
 
         if(getNoOpenLobbyError)
@@ -307,7 +310,7 @@ public class LobbyManager : MonoSingleton<LobbyManager>
         }
     }
 
-    private void OnJoinedLobbyUpdateCallback(object sender, LobbyEventArgs e)
+    private async void OnJoinedLobbyUpdateCallback(object sender, LobbyEventArgs e)
     {
         if (e.lobby.Data != null)
         {
@@ -315,9 +318,17 @@ public class LobbyManager : MonoSingleton<LobbyManager>
             int currentHostStartGameplayTimes = currentHostStartGameplayTimesDataObject == null ? 0 : int.Parse(currentHostStartGameplayTimesDataObject.Value);
             if (_currentLocalStartGameplayTimes < currentHostStartGameplayTimes)
             {
-                _currentLocalStartGameplayTimes++;
-                //TODO: get server ip and port and use to connect in gameplay scene
-                SceneManager.LoadScene("Gameplay");
+                try
+                {
+                    //when a player finishes gameplay and go back to lobby, they should not be in ready state right away
+                    await UpdatePlayerReadyStatus(false);
+                    _currentLocalStartGameplayTimes++;
+                    SceneManager.LoadScene("Gameplay");
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogException(ex);
+                }
             }
         }
     }
