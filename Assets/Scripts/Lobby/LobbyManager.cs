@@ -6,11 +6,13 @@ using Unity.Services.Lobbies.Models;
 using Unity.Services.Lobbies;
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class LobbyManager : MonoBehaviour
 {
     public const string KEY_PLAYER_NAME = "PlayerName";
     public const string KEY_PLAYER_READY_STATUS = "PlayerReadyStatus";
+    public const string KEY_HOST_START_GAMEPLAY_TIMES = "HostStartGameplayTimes";
 
     public class LobbyEventArgs : EventArgs
     {
@@ -19,6 +21,8 @@ public class LobbyManager : MonoBehaviour
     public event EventHandler<LobbyEventArgs> OnJoinedLobby;
     public event EventHandler<LobbyEventArgs> OnJoinedLobbyUpdate;
 
+    public int CurrentLocalStartGameplayTimes => _currentLocalStartGameplayTimes;
+    
     private const float k_defaultLobbyHeartBeatTime = 15f;
     private const float k_defaultLobbyPollTime = 1.5f;
     private const int k_defaultMaxPlayersInLobby = 3;
@@ -29,7 +33,8 @@ public class LobbyManager : MonoBehaviour
     private bool _isHandlingLobbyHeartbeat = false;
     private bool _isHandlingLobbyPoll = false;
     private float _heartbeatTimer = 0;
-    public float _lobbyPollTimer = 0;
+    private float _lobbyPollTimer = 0;
+    private int _currentLocalStartGameplayTimes = 0;
 
     public bool IsLobbyHost(string playerId)
     {
@@ -38,21 +43,21 @@ public class LobbyManager : MonoBehaviour
 
     public bool IsPlayerReady(string playerId, PlayerDataObject playerReadyStatusDataObject)
     {
-        //ignore ready status for host
+        //host is always ready
         if(AuthenticationService.Instance != null && IsLobbyHost(playerId))
         {
-            return false;
+            return true;
         }
 
         string playerReadyStatusValue = playerReadyStatusDataObject?.Value;
         return playerReadyStatusValue != null && playerReadyStatusValue.Equals("1");
     }
 
-    public bool AreAllPlayersReadyExceptHost(List<Player> players)
+    public bool AreAllPlayersReadyIgnoreHost(List<Player> players)
     {
         if (players == null || players.Count <= 1)
         {
-            return true;
+            return false;
         }
 
         foreach (Player player in players)
@@ -86,10 +91,11 @@ public class LobbyManager : MonoBehaviour
         options.Data = new Dictionary<string, PlayerDataObject>() {
             {
                 KEY_PLAYER_READY_STATUS, new PlayerDataObject(
-                    visibility: PlayerDataObject.VisibilityOptions.Public,
+                    visibility: PlayerDataObject.VisibilityOptions.Member,
                     value: isPlayerReady ? "1" : null)
             }
         };
+
         string playerId = AuthenticationService.Instance.PlayerId;
         try
         {
@@ -97,17 +103,62 @@ public class LobbyManager : MonoBehaviour
             _joinedLobby = lobby;
             OnJoinedLobbyUpdate?.Invoke(this, new LobbyEventArgs { lobby = _joinedLobby });
         }
-        catch (LobbyServiceException e)
+        catch (LobbyServiceException ex)
         {
-            Debug.Log(e);
+            Debug.LogException(ex);
         }
     }
 
-    public async Task StartGameplay(string serverIP, string serverPort)
+    public async Task UpdateHostStartGameplayTimes(string serverIP, string serverPort)
     {
-        await Task.Yield();
-        //TODO send lobby public data -> server ip/port
-        //config gameplay data accordingly and load gameplay scene
+        if (_joinedLobby == null)
+        {
+            return;
+        }
+
+        int currentHostStartGameplayTimes = 0;
+        if (_joinedLobby.Data != null)
+        {
+            _joinedLobby.Data.TryGetValue(KEY_HOST_START_GAMEPLAY_TIMES, out DataObject currentHostStartGameplayTimesDataObject);
+            currentHostStartGameplayTimes = currentHostStartGameplayTimesDataObject == null ? 0 : int.Parse(currentHostStartGameplayTimesDataObject.Value);
+        }
+
+        UpdateLobbyOptions options = new UpdateLobbyOptions();
+        options.Data = new Dictionary<string, DataObject>()
+        {
+            {
+                KEY_HOST_START_GAMEPLAY_TIMES, new DataObject(
+                    visibility: DataObject.VisibilityOptions.Member,
+                    value: (currentHostStartGameplayTimes + 1).ToString())
+            }
+        };
+        //TODO: set server ip and port and use to connect in gameplay scene
+
+        try
+        {
+            var lobby = await LobbyService.Instance.UpdateLobbyAsync(_joinedLobby.Id, options);
+            _joinedLobby = lobby;
+            OnJoinedLobbyUpdate?.Invoke(this, new LobbyEventArgs { lobby = _joinedLobby });
+        }
+        catch (LobbyServiceException ex)
+        {
+            Debug.LogException(ex);
+        }
+    }
+
+    private void Awake()
+    {
+        OnJoinedLobbyUpdate += OnJoinedLobbyUpdateCallback;
+    }
+
+    private void OnDestroy()
+    {
+        OnJoinedLobbyUpdate -= OnJoinedLobbyUpdateCallback;
+    }
+
+    private async void OnApplicationQuit()
+    {
+        await LeaveCurrentLobby();
     }
 
     private void Update()
@@ -123,11 +174,6 @@ public class LobbyManager : MonoBehaviour
                 HandleLobbyHeartbeat();
             }
         }
-    }
-
-    private async void OnApplicationQuit()
-    {
-        await LeaveCurrentLobby();
     }
 
     private async void OnSignedIn()
@@ -257,44 +303,19 @@ public class LobbyManager : MonoBehaviour
         }
     }
 
-    private void HostUpdateStartGameplayStatus()
+    private void OnJoinedLobbyUpdateCallback(object sender, LobbyEventArgs e)
     {
-        /*
-        try
+        if (e.lobby.Data != null)
         {
-            UpdateLobbyOptions options = new UpdateLobbyOptions();
-            options.Name = "testLobbyName";
-            options.MaxPlayers = 4;
-            options.IsPrivate = false;
-
-            //Ensure you sign-in before calling Authentication Instance
-            //See IAuthenticationService interface
-            options.HostId = AuthenticationService.Instance.PlayerId;
-
-            options.Data = new Dictionary<string, DataObject>()
+            e.lobby.Data.TryGetValue(KEY_HOST_START_GAMEPLAY_TIMES, out DataObject currentHostStartGameplayTimesDataObject);
+            int currentHostStartGameplayTimes = currentHostStartGameplayTimesDataObject == null ? 0 : int.Parse(currentHostStartGameplayTimesDataObject.Value);
+            if (_currentLocalStartGameplayTimes < currentHostStartGameplayTimes)
             {
-                {
-                    "ExamplePrivateData", new DataObject(
-                        visibility: DataObject.VisibilityOptions.Private,
-                        value: "PrivateData")
-                },
-                {
-                    "ExamplePublicData", new DataObject(
-                        visibility: DataObject.VisibilityOptions.Public,
-                        value: "PublicData",
-                        index: DataObject.IndexOptions.S1)
-                },
-            };
-
-            var lobby = await LobbyService.Instance.UpdateLobbyAsync("lobbyId", options);
-
-            //...
+                _currentLocalStartGameplayTimes++;
+                //TODO: get server ip and port and use to connect in gameplay scene
+                //TODO: keep showing starting gameplay overlay until successfully connected to gameplay server
+                SceneManager.LoadScene("Gameplay");
+            }
         }
-        catch (LobbyServiceException e)
-        {
-            Debug.Log(e);
-        }
-        */
-        //TODO: implement
     }
 }

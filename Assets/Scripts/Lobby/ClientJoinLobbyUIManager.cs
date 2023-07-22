@@ -82,17 +82,17 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
 
     private async void OnStartGameButtonClicked()
     {
-        _startGameButton.interactable = false;
         _startingGameplayUIOverlay.SetActive(true);
+        _startGameButton.interactable = false;
         try
         {
-            await _lobbyManager.StartGameplay(_serverIPInputField.text, _serverPortInputField.text);
+            await _lobbyManager.UpdateHostStartGameplayTimes(_serverIPInputField.text, _serverPortInputField.text);
         }
         catch (Exception ex)
         {
             Debug.LogException(ex);
-            _startGameButton.interactable = true;
             _startingGameplayUIOverlay.SetActive(false);
+            _startGameButton.interactable = true;
         }
     }
 
@@ -127,7 +127,7 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
         {
             if(AuthenticationService.Instance.PlayerId == lobby.HostId)
             {
-                ShowStartGameUIGroup(_lobbyManager.AreAllPlayersReadyExceptHost(lobby.Players));
+                ShowStartGameUIGroup(_lobbyManager.AreAllPlayersReadyIgnoreHost(lobby.Players));
             }
             else
             {
@@ -136,10 +136,10 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
         }
     }
 
-    private void ShowStartGameUIGroup(bool isAllPlayersReady)
+    private void ShowStartGameUIGroup(bool areAllPlayersReadyIgnoreHost)
     {
         _readyButton.gameObject.SetActive(false);
-        _startGameButton.interactable = isAllPlayersReady;
+        _startGameButton.interactable = areAllPlayersReadyIgnoreHost;
         _startGameButton.gameObject.SetActive(true);
         _startGameHostConfigUIGroup.SetActive(true);
     }
