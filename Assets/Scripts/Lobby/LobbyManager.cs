@@ -36,8 +36,15 @@ public class LobbyManager : MonoBehaviour
         return _joinedLobby != null && _joinedLobby.HostId == playerId;
     }
 
-    public bool IsPlayerReady(string playerReadyStatusValue)
+    public bool IsPlayerReady(PlayerDataObject playerDataObject)
     {
+        //ignore ready status for host
+        if(AuthenticationService.Instance != null && IsLobbyHost(AuthenticationService.Instance.PlayerId))
+        {
+            return false;
+        }
+
+        string playerReadyStatusValue = playerDataObject?.Value;
         return playerReadyStatusValue != null && playerReadyStatusValue.Equals("1");
     }
 
@@ -51,7 +58,7 @@ public class LobbyManager : MonoBehaviour
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
     }
 
-    public async void UpdatePlayerReadyStatus(bool isPlayerReady)
+    public async Task UpdatePlayerReadyStatus(bool isPlayerReady)
     {
         if (_joinedLobby == null)
         {

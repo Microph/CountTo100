@@ -60,9 +60,18 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
         }
     }
 
-    private void OnReadyButtonClicked()
+    private async void OnReadyButtonClicked()
     {
-        throw new NotImplementedException();
+        _readyButton.interactable = false;
+        try
+        {
+            await _lobbyManager.UpdatePlayerReadyStatus(true);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            _readyButton.interactable = true;
+        }
     }
 
     private void OnStartGameButtonClicked()
@@ -94,7 +103,7 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
             player.Data.TryGetValue(LobbyManager.KEY_PLAYER_NAME, out PlayerDataObject playerNameDataObject);
             player.Data.TryGetValue(LobbyManager.KEY_PLAYER_READY_STATUS, out PlayerDataObject playerReadyStatusDataObject);
             var newPlayerElement = Instantiate(_lobbyPlayerElementPrefab, _lobbyPlayerElementContentTransform);
-            newPlayerElement.Setup(playerNameDataObject?.Value, _lobbyManager.IsLobbyHost(player.Id), _lobbyManager.IsPlayerReady(playerReadyStatusDataObject?.Value));
+            newPlayerElement.Setup(playerNameDataObject?.Value, _lobbyManager.IsLobbyHost(player.Id), _lobbyManager.IsPlayerReady(playerReadyStatusDataObject));
         }
 
         if (AuthenticationService.Instance != null)
