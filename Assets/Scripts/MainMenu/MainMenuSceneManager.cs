@@ -32,7 +32,6 @@ public class MainMenuSceneManager : MonoSingleton<MainMenuSceneManager>
     private void OnStartAsClientButtonClicked()
     {
         GlobalServerConfigManager.IsServer = false;
-        //TODO: To player naming and quick joining flow first
-        SceneManager.LoadScene("Gameplay");
+        SceneManager.LoadScene("ClientJoinLobbyScene");
     }
 }
