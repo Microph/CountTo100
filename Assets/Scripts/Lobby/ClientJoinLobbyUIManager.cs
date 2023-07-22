@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class ClientJoinLobbyUIManager : MonoBehaviour
 {
-    [SerializeField] private GameObject _startingGameplayUIOverlay;
+    [SerializeField] private GameObject _startingGameplayUIOverlay; //TODO: show at the start of gameplay scene instead
 
     [Header("EnterPlayerNameUIGroup")]
     [SerializeField] private GameObject EnterPlayerNameUIGroup;
