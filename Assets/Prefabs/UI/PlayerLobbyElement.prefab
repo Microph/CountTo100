@@ -93,7 +93,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6705031376444227260
 RectTransform:
   m_ObjectHideFlags: 0
@@ -222,6 +222,7 @@ GameObject:
   - component: {fileID: 3363017051601549446}
   - component: {fileID: 8206806484306596056}
   - component: {fileID: 7751458798300636186}
+  - component: {fileID: 4998981095269643927}
   m_Layer: 5
   m_Name: PlayerLobbyElement
   m_TagString: Untagged
@@ -241,9 +242,9 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 459076418523267982}
   - {fileID: 748147922266049066}
   - {fileID: 6705031376444227260}
-  - {fileID: 459076418523267982}
   m_Father: {fileID: 0}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -290,6 +291,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &4998981095269643927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4424158178518891987}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a67c341e49e21054a8fe7b2b5a04cac8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playerNameText: {fileID: 3172533111734078423}
+  _isHostSpriteObject: {fileID: 1458482492677338284}
+  _isReadyObject: {fileID: 3155499832325579408}
 --- !u!1 &5866583437199179410
 GameObject:
   m_ObjectHideFlags: 0

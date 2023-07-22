@@ -30,9 +30,14 @@ public class LobbyManager : MonoBehaviour
     private float _heartbeatTimer = 0;
     public float _lobbyPollTimer = 0;
 
-    public bool IsLobbyHost()
+    public bool IsLobbyHost(string playerId)
     {
-        return _joinedLobby != null && _joinedLobby.HostId == AuthenticationService.Instance.PlayerId;
+        return _joinedLobby != null && _joinedLobby.HostId == playerId;
+    }
+
+    public bool IsPlayerReady(string playerReadyStatusValue)
+    {
+        return playerReadyStatusValue != null && playerReadyStatusValue.Equals("1");
     }
 
     public async Task AuthenticateAndQuickJoinLobby(string playerName)
@@ -75,13 +80,16 @@ public class LobbyManager : MonoBehaviour
 
     private void Update()
     {
-        if (!_isHandlingLobbyPoll)
+        if(_joinedLobby != null)
         {
-            HandleLobbyPoll();
-        }
-        if (IsLobbyHost() && !_isHandlingLobbyHeartbeat)
-        {
-            HandleLobbyHeartbeat();
+            if (!_isHandlingLobbyPoll)
+            {
+                HandleLobbyPoll();
+            }
+            if (AuthenticationService.Instance != null && IsLobbyHost(AuthenticationService.Instance.PlayerId) && !_isHandlingLobbyHeartbeat)
+            {
+                HandleLobbyHeartbeat();
+            }
         }
     }
 

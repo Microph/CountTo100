@@ -1225,6 +1225,8 @@ MonoBehaviour:
   LobbyUIGroup: {fileID: 961600428}
   _playerNameInputField: {fileID: 438938807}
   _joinALobbyButton: {fileID: 687778131}
+  _lobbyPlayerElementPrefab: {fileID: 4998981095269643927, guid: 3e3b1f31220fabd4a8ce1d61b1d6c073, type: 3}
+  _lobbyPlayerElementContentTransform: {fileID: 1002729632}
 --- !u!1 &549816460
 GameObject:
   m_ObjectHideFlags: 0
@@ -1352,6 +1354,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ed3aef94847f76409383dbc3e3a2250, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _lobbyPollTimer: 0
 --- !u!1 &687778129
 GameObject:
   m_ObjectHideFlags: 0
