@@ -79,6 +79,23 @@ public class LobbyManager : MonoBehaviour
         }
     }
 
+    public bool AreAllPlayersReadyExceptHost(List<Player> players)
+    {
+        if (players == null || players.Count <= 1)
+        {
+            return false;
+        }
+
+        foreach (Player player in players)
+        {
+            if (player.Id != _joinedLobby.HostId && !player.Data.ContainsKey(KEY_PLAYER_READY_STATUS))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private void Update()
     {
         if(_joinedLobby != null)
@@ -206,29 +223,7 @@ public class LobbyManager : MonoBehaviour
             {
                 _isHandlingLobbyPoll = false;
             }
-
-            if (_joinedLobby != null && AreAllPlayersReadyExceptHost(_joinedLobby.Players))
-            {
-                //TODO If all players are ready except host, enable start gameplay button for host
-            }
         }
-    }
-
-    private bool AreAllPlayersReadyExceptHost(List<Player> players)
-    {
-        if (players == null || players.Count <= 1)
-        {
-            return false;
-        }
-
-        foreach (Player player in players)
-        {
-            if (player.Id != _joinedLobby.HostId && !player.Data.ContainsKey(KEY_PLAYER_READY_STATUS))
-            {
-                return false;
-            }
-        }
-        return true;
     }
 
     private async Task LeaveCurrentLobby()

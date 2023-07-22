@@ -97,12 +97,11 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
             newPlayerElement.Setup(playerNameDataObject?.Value, _lobbyManager.IsLobbyHost(player.Id), _lobbyManager.IsPlayerReady(playerReadyStatusDataObject?.Value));
         }
 
-        bool isAllPlayersReady = false; //TODO: implement check logic
-        if(AuthenticationService.Instance != null)
+        if (AuthenticationService.Instance != null)
         {
             if(AuthenticationService.Instance.PlayerId == lobby.HostId)
             {
-                ShowStartGameButton(isAllPlayersReady);
+                ShowStartGameButton(_lobbyManager.AreAllPlayersReadyExceptHost(lobby.Players));
             }
             else
             {
