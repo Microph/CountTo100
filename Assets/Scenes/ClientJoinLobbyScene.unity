@@ -1227,6 +1227,8 @@ MonoBehaviour:
   _joinALobbyButton: {fileID: 687778131}
   _lobbyPlayerElementPrefab: {fileID: 4998981095269643927, guid: 3e3b1f31220fabd4a8ce1d61b1d6c073, type: 3}
   _lobbyPlayerElementContentTransform: {fileID: 1002729632}
+  _readyButton: {fileID: 144079063}
+  _startGameButton: {fileID: 848884367}
 --- !u!1 &549816460
 GameObject:
   m_ObjectHideFlags: 0
@@ -1967,8 +1969,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 848884366}
   - {fileID: 144079062}
+  - {fileID: 848884366}
   - {fileID: 1728623404}
   m_Father: {fileID: 489805233}
   m_RootOrder: -1

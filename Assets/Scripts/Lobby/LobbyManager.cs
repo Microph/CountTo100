@@ -20,7 +20,7 @@ public class LobbyManager : MonoBehaviour
     public event EventHandler<LobbyEventArgs> OnJoinedLobbyUpdate;
 
     private const float k_defaultLobbyHeartBeatTime = 15f;
-    private const float k_defaultLobbyPollTime = 3f;
+    private const float k_defaultLobbyPollTime = 2f;
 
     private string _playerName;
     private Player _player;

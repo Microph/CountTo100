@@ -1,5 +1,7 @@
 using System;
+using System.Net;
 using TMPro;
+using Unity.Services.Authentication;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,6 +13,8 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
     [SerializeField] private Button _joinALobbyButton;
     [SerializeField] private LobbyPlayerElement _lobbyPlayerElementPrefab;
     [SerializeField] private Transform _lobbyPlayerElementContentTransform;
+    [SerializeField] private Button _readyButton;
+    [SerializeField] private Button _startGameButton;
 
     private LobbyManager _lobbyManager;
 
@@ -76,6 +80,32 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
             var newPlayerElement = Instantiate(_lobbyPlayerElementPrefab, _lobbyPlayerElementContentTransform);
             newPlayerElement.Setup(playerNameDataObject?.Value, _lobbyManager.IsLobbyHost(player.Id), _lobbyManager.IsPlayerReady(playerReadyStatusDataObject?.Value));
         }
+
+        bool isAllPlayersReady = false; //TODO: implement check logic
+        if(AuthenticationService.Instance != null)
+        {
+            if(AuthenticationService.Instance.PlayerId == lobby.HostId)
+            {
+                ShowStartGameButton(isAllPlayersReady);
+            }
+            else
+            {
+                ShowReadyButton();
+            }
+        }
+    }
+
+    private void ShowStartGameButton(bool isAllPlayersReady)
+    {
+        _readyButton.gameObject.SetActive(false);
+        _startGameButton.interactable = isAllPlayersReady;
+        _startGameButton.gameObject.SetActive(true);
+    }
+
+    private void ShowReadyButton()
+    {
+        _readyButton.gameObject.SetActive(true);
+        _startGameButton.gameObject.SetActive(false);
     }
 
     private void ShowEnterPlayerNameUIGroup()
