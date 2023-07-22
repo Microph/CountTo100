@@ -14,6 +14,8 @@ public class LobbyManager : MonoSingleton<LobbyManager>
     public const string KEY_PLAYER_NAME = "PlayerName";
     public const string KEY_PLAYER_READY_STATUS = "PlayerReadyStatus";
     public const string KEY_HOST_START_GAMEPLAY_TIMES = "HostStartGameplayTimes";
+    public const string KEY_GAMEPLAY_SERVER_IP = "GameplayServerIP";
+    public const string KEY_GAMEPLAY_SERVER_PORT = "GameplayServerPort";
 
     public class LobbyEventArgs : EventArgs
     {
@@ -125,10 +127,19 @@ public class LobbyManager : MonoSingleton<LobbyManager>
                 KEY_HOST_START_GAMEPLAY_TIMES, new DataObject(
                     visibility: DataObject.VisibilityOptions.Member,
                     value: (currentHostStartGameplayTimes + (increaseHostStartGameplayTime ? 1 : 0)).ToString())
+            },
+            {
+                KEY_GAMEPLAY_SERVER_IP, new DataObject(
+                    visibility: DataObject.VisibilityOptions.Member,
+                    value: serverIP)
+            },
+            {
+                KEY_GAMEPLAY_SERVER_PORT, new DataObject(
+                    visibility: DataObject.VisibilityOptions.Member,
+                    value: serverPort)
             }
         };
 
-        //TODO: set server ip and port and use to connect in gameplay scene
         var lobby = await LobbyService.Instance.UpdateLobbyAsync(_joinedLobby.Id, options);
         _joinedLobby = lobby;
         OnJoinedLobbyUpdate?.Invoke(this, new LobbyEventArgs { lobby = _joinedLobby });

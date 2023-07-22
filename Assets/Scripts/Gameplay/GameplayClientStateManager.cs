@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Threading.Tasks;
 using CountTo100.Utilities;
-using System;
+using Unity.Services.Lobbies.Models;
 
 public class GameplayClientStateManager : StateManager
 {
@@ -35,10 +35,18 @@ public class GameplayClientStateManager : StateManager
             return;
         }
 
+        string serverIP = "127.0.0.1";
+        ushort serverPort = 7777;
         if (LobbyManager.Instance != null)
         {
             //in case a player leaves gameplay and go back to lobby, they should not be in ready state right away
             await LobbyManager.Instance.UpdatePlayerReadyStatus(false);
+            LobbyManager.Instance.JoinedLobby.Data.TryGetValue(LobbyManager.KEY_GAMEPLAY_SERVER_IP, out DataObject serverIPDataObject);
+            serverIP = serverIPDataObject?.Value;
+            Debug.Log(serverIPDataObject?.Value);
+            LobbyManager.Instance.JoinedLobby.Data.TryGetValue(LobbyManager.KEY_GAMEPLAY_SERVER_PORT, out DataObject serverPortDataObject);
+            serverPort = ushort.Parse(serverPortDataObject?.Value);
+            Debug.Log(ushort.Parse(serverPortDataObject?.Value));
         }
 
         _networkManager = NetworkManager.Singleton;
@@ -46,7 +54,7 @@ public class GameplayClientStateManager : StateManager
         _transport = _networkManager.GetComponent<UnityTransport>();
         Debug.Assert(_transport != null);
         _networkManager.OnClientDisconnectCallback += OnClientDisconnected;
-        _transport.SetConnectionData("127.0.0.1", 7777); //TODO: get value from LobbyManager singleton
+        _transport.SetConnectionData(serverIP, serverPort);
         _networkManager.NetworkConfig.ConnectionData = System.Text.Encoding.ASCII.GetBytes("TestPlayerName"); //TODO: get from text input
         _networkManager.StartClient();
         await TaskHelper.When(() => _networkManager.IsConnectedClient && IsPlayerObjectSpawned(_networkManager.LocalClient.PlayerObject));
