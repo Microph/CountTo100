@@ -83,7 +83,7 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
         _startGameButton.interactable = false;
         try
         {
-            await _lobbyManager.UpdateHostStartGameplayLobbyData(true, _serverIPInputField.text, _serverPortInputField.text);
+            await _lobbyManager.UpdateHostLobbyData(true, _serverIPInputField.text, _serverPortInputField.text);
         }
         catch (Exception ex)
         {

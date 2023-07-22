@@ -104,7 +104,7 @@ public class LobbyManager : MonoSingleton<LobbyManager>
         OnJoinedLobbyUpdate?.Invoke(this, new LobbyEventArgs { lobby = _joinedLobby });
     }
 
-    public async Task UpdateHostStartGameplayLobbyData(bool increaseHostStartGameplayTime, string serverIP, string serverPort)
+    public async Task UpdateHostLobbyData(bool increaseHostStartGameplayTime, string serverIP, string serverPort)
     {
         if (_joinedLobby == null)
         {
@@ -203,16 +203,9 @@ public class LobbyManager : MonoSingleton<LobbyManager>
         }
     }
 
-    private async void OnJoinedLobbyUpdateCallback(object sender, LobbyEventArgs e)
+    private void OnJoinedLobbyUpdateCallback(object sender, LobbyEventArgs e)
     {
-        try
-        {
-            await CheckStartGameplay(e);
-        }
-        catch (Exception ex)
-        {
-            Debug.LogException(ex);
-        }
+        CheckStartGameplay(e);
     }
 
     private async Task QuickJoinLobby()
@@ -308,7 +301,7 @@ public class LobbyManager : MonoSingleton<LobbyManager>
         await LobbyService.Instance.RemovePlayerAsync(_joinedLobby.Id, AuthenticationService.Instance.PlayerId);
     }
 
-    private async Task CheckStartGameplay(LobbyEventArgs e)
+    private void CheckStartGameplay(LobbyEventArgs e)
     {
         if (e.lobby.Data != null)
         {
@@ -316,8 +309,6 @@ public class LobbyManager : MonoSingleton<LobbyManager>
             int currentHostStartGameplayTimes = currentHostStartGameplayTimesDataObject == null ? 0 : int.Parse(currentHostStartGameplayTimesDataObject.Value);
             if (_currentLocalStartGameplayTimes < currentHostStartGameplayTimes)
             {
-                //when a player finishes gameplay and go back to lobby, they should not be in ready state right away
-                await UpdatePlayerReadyStatus(false);
                 _currentLocalStartGameplayTimes++;
                 SceneManager.LoadScene("Gameplay");
             }

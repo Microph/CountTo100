@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Threading.Tasks;
 using CountTo100.Utilities;
+using System;
 
 public class GameplayClientStateManager : StateManager
 {
@@ -32,6 +33,12 @@ public class GameplayClientStateManager : StateManager
         {
             Debug.LogWarning("Did not config as a client");
             return;
+        }
+
+        if (LobbyManager.Instance != null)
+        {
+            //in case a player leaves gameplay and go back to lobby, they should not be in ready state right away
+            await LobbyManager.Instance.UpdatePlayerReadyStatus(false);
         }
 
         _networkManager = NetworkManager.Singleton;

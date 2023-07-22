@@ -38,8 +38,8 @@ public class GameplayClientClientStartedState : State
     public override void OnEnter()
     {
         _gameplayClientContext.GameplaySceneManager.GameplayServerStateManager.NVCurrentStateEnum.OnValueChanged += OnGameplayServerStateChanged;
-        _gameplayClientContext.PlayerObject.PlayerReadyServerRpc();
         _gameplayClientContext.GameplaySceneManager.GameplayUIManager.ShowWaitingForPlayerText();
+        _gameplayClientContext.PlayerObject.PlayerReadyServerRpc();
     }
 
     public override void OnExit()
