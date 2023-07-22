@@ -20,10 +20,11 @@ public class LobbyManager : MonoBehaviour
     public event EventHandler<LobbyEventArgs> OnJoinedLobbyUpdate;
 
     private const float k_defaultLobbyHeartBeatTime = 15f;
-    private const float k_defaultLobbyPollTime = 2f;
+    private const float k_defaultLobbyPollTime = 1.5f;
+    private const int k_defaultMaxPlayersInLobby = 3;
 
     private string _playerName;
-    private Player _player;
+    private Player _cachedPlayerModel;
     private Lobby _joinedLobby;
     private bool _isHandlingLobbyHeartbeat = false;
     private bool _isHandlingLobbyPoll = false;
@@ -44,7 +45,7 @@ public class LobbyManager : MonoBehaviour
     {
         _playerName = playerName;
         InitializationOptions initializationOptions = new InitializationOptions();
-        initializationOptions.SetProfile(playerName);
+        initializationOptions.SetProfile(_playerName);
         await UnityServices.InitializeAsync(initializationOptions);
         AuthenticationService.Instance.SignedIn += OnSignedIn;
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
@@ -93,6 +94,11 @@ public class LobbyManager : MonoBehaviour
         }
     }
 
+    private async void OnApplicationQuit()
+    {
+        await LeaveCurrentLobby();
+    }
+
     private async void OnSignedIn()
     {
         AuthenticationService.Instance.SignedIn -= OnSignedIn;
@@ -111,7 +117,7 @@ public class LobbyManager : MonoBehaviour
         {
             try
             {
-                await CreateAndJoinLobby(3);
+                await CreateAndJoinLobby(k_defaultMaxPlayersInLobby);
             }
             catch (Exception ex)
             {
@@ -146,10 +152,10 @@ public class LobbyManager : MonoBehaviour
 
     private Player GetPlayer()
     {
-        _player ??= new Player(AuthenticationService.Instance.PlayerId, null, new Dictionary<string, PlayerDataObject> {
+        _cachedPlayerModel ??= new Player(AuthenticationService.Instance.PlayerId, null, new Dictionary<string, PlayerDataObject> {
             { KEY_PLAYER_NAME, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, _playerName) },
         });
-        return _player;
+        return _cachedPlayerModel;
     }
 
     private async void HandleLobbyHeartbeat()
@@ -223,5 +229,22 @@ public class LobbyManager : MonoBehaviour
             }
         }
         return true;
+    }
+
+    private async Task LeaveCurrentLobby()
+    {
+        if (AuthenticationService.Instance == null || _joinedLobby == null)
+        {
+            return;
+        }
+
+        try
+        {
+            await LobbyService.Instance.RemovePlayerAsync(_joinedLobby.Id, AuthenticationService.Instance.PlayerId);
+        }
+        catch (LobbyServiceException ex)
+        {
+            Debug.LogException(ex);
+        }
     }
 }
