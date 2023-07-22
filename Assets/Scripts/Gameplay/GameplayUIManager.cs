@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class GameplayUIManager : MonoBehaviour
 {
+    [SerializeField] private GameObject _startingGameplayUIOverlay;
     [SerializeField] private Button _exitButton;
     [SerializeField] private TMP_Text _waitingForPlayerText;
     [SerializeField] private TMP_Text _countDownStartGameplayText;
@@ -22,16 +23,23 @@ public class GameplayUIManager : MonoBehaviour
     {
         _onExitButtonClickedAction = null;
         HideAll();
-        _waitingForPlayerText.gameObject.SetActive(true);
+        _startingGameplayUIOverlay.gameObject.SetActive(true);
     }
 
     public void HideAll()
     {
+        _startingGameplayUIOverlay.gameObject.SetActive(false);
         _exitButton.gameObject.SetActive(false);
         _waitingForPlayerText.gameObject.SetActive(false);
         _countDownStartGameplayText.gameObject.SetActive(false);
         _currentGameplayScoreText.gameObject.SetActive(false);
         _winnerText.gameObject.SetActive(false);
+    }
+
+    public void ShowWaitingForPlayerText()
+    {
+        HideAll();
+        _waitingForPlayerText.gameObject.SetActive(true);
     }
 
     public void ShowCountDownStartGameplayText()

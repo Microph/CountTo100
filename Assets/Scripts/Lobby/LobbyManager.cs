@@ -313,7 +313,6 @@ public class LobbyManager : MonoBehaviour
             {
                 _currentLocalStartGameplayTimes++;
                 //TODO: get server ip and port and use to connect in gameplay scene
-                //TODO: keep showing starting gameplay overlay until successfully connected to gameplay server
                 SceneManager.LoadScene("Gameplay");
             }
         }

@@ -39,6 +39,7 @@ public class GameplayClientClientStartedState : State
     {
         _gameplayClientContext.GameplaySceneManager.GameplayServerStateManager.NVCurrentStateEnum.OnValueChanged += OnGameplayServerStateChanged;
         _gameplayClientContext.PlayerObject.PlayerReadyServerRpc();
+        _gameplayClientContext.GameplaySceneManager.GameplayUIManager.ShowWaitingForPlayerText();
     }
 
     public override void OnExit()

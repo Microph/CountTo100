@@ -7,8 +7,6 @@ using UnityEngine.UI;
 
 public class ClientJoinLobbyUIManager : MonoBehaviour
 {
-    [SerializeField] private GameObject _startingGameplayUIOverlay; //TODO: show at the start of gameplay scene instead
-
     [Header("EnterPlayerNameUIGroup")]
     [SerializeField] private GameObject EnterPlayerNameUIGroup;
     [SerializeField] private TMP_InputField _playerNameInputField;
@@ -82,7 +80,6 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
 
     private async void OnStartGameButtonClicked()
     {
-        _startingGameplayUIOverlay.SetActive(true);
         _startGameButton.interactable = false;
         try
         {
@@ -91,7 +88,6 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
         catch (Exception ex)
         {
             Debug.LogException(ex);
-            _startingGameplayUIOverlay.SetActive(false);
             _startGameButton.interactable = true;
         }
     }
