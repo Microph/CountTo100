@@ -1,5 +1,6 @@
 using CountTo100.Utilities;
 using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using static GameplayServerStateManager;
 
@@ -36,6 +37,7 @@ public class GameplayServerServerStartedState : State
         _gameplayServerContext.NetworkManager.OnClientConnectedCallback += OnClientConnected;
         _gameplayServerContext.NetworkManager.OnClientDisconnectCallback += OnClientDisconnected;
         _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.OnPlayerReady += OnPlayerReady;
+        _gameplayServerContext.GameplaySceneManager.GameplayUIManager.ShowServerInfo($"Server port: {_gameplayServerContext.Transport.ConnectionData.Port}");
     }
 
     public override void OnExit()

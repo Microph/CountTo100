@@ -14,15 +14,17 @@ public class GameplayServerStateManager : NetworkStateManager
     {
         public GameplaySceneManager GameplaySceneManager;
         public NetworkManager NetworkManager;
+        public UnityTransport Transport;
         public int TargetNumberOfPlayers;
         public Dictionary<ulong, PlayerData> ConnectedPlayerDataDict;
         public PlayerObject PlayerPrefab;
         public Transform[] PlayerPositionTransforms;
 
-        public GameplayServerContext(GameplaySceneManager gameplaySceneManager, NetworkManager networkManager, int targetNumberOfPlayers, Dictionary<ulong, PlayerData> connectedPlayerDataDict, PlayerObject playerPrefab, Transform[] playerPositionTransforms)
+        public GameplayServerContext(GameplaySceneManager gameplaySceneManager, NetworkManager networkManager, UnityTransport transport, int targetNumberOfPlayers, Dictionary<ulong, PlayerData> connectedPlayerDataDict, PlayerObject playerPrefab, Transform[] playerPositionTransforms)
         {
             GameplaySceneManager = gameplaySceneManager;
             NetworkManager = networkManager;
+            Transport = transport;
             TargetNumberOfPlayers = targetNumberOfPlayers;
             ConnectedPlayerDataDict = connectedPlayerDataDict;
             PlayerPrefab = playerPrefab;
@@ -60,7 +62,7 @@ public class GameplayServerStateManager : NetworkStateManager
         _targetNumberOfPlayers = GlobalServerConfigManager.LocalServerAllocationPayload.numberOfPlayers;
         _networkManager.ConnectionApprovalCallback = ConnectionApprovalCheck;
         _networkManager.OnClientDisconnectCallback += OnClientDisconnected;
-        _transport.SetConnectionData("127.0.0.1", 7777); //TODO: not hardcoded
+        _transport.SetConnectionData("127.0.0.1", GlobalServerConfigManager.LocalServerAllocationPayload.serverPort);
         _networkManager.StartServer();
         await TaskHelper.When(() => IsServer && IsSpawned);
         Debug.Log("Server object spawned!");
@@ -69,6 +71,7 @@ public class GameplayServerStateManager : NetworkStateManager
                 gameplayServerContext: new GameplayServerContext(
                     gameplaySceneManager: GameplaySceneManager.Instance,
                     networkManager: _networkManager,
+                    transport: _transport,
                     targetNumberOfPlayers: _targetNumberOfPlayers,
                     connectedPlayerDataDict: _connectedPlayerDataDict,
                     playerPrefab: _playerPrefab,

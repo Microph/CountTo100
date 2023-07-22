@@ -5,6 +5,10 @@ using UnityEngine.UI;
 
 public class GameplayUIManager : MonoBehaviour
 {
+    [Header("Server")]
+    [SerializeField] private TMP_Text _serverInfoText;
+
+    [Header("Client")]
     [SerializeField] private GameObject _startingGameplayUIOverlay;
     [SerializeField] private Button _exitButton;
     [SerializeField] private TMP_Text _waitingForPlayerText;
@@ -75,6 +79,13 @@ public class GameplayUIManager : MonoBehaviour
     {
         _winnerText.text = $"{playerName} (ID: {clientId}) counted to\n100";
         _onExitButtonClickedAction = onExitButtonClickedAction;
+    }
+
+    public void ShowServerInfo(string text)
+    {
+        HideAll();
+        _serverInfoText.text = text;
+        _serverInfoText.gameObject.SetActive(true);
     }
 
     private void OnExitButtonClicked()

@@ -24,6 +24,10 @@ public class GameplayClientStateManager : StateManager
         }
     }
 
+    private const string k_defaultClientPlayerName = "Player";
+    private const string k_defaultServerIP = "127.0.0.1";
+    private const ushort k_defaultServerPort = 7777;
+
     private NetworkManager _networkManager;
     private UnityTransport _transport;
 
@@ -35,9 +39,9 @@ public class GameplayClientStateManager : StateManager
             return;
         }
 
-        string playerName = "Player";
-        string serverIP = "127.0.0.1";
-        ushort serverPort = 7777;
+        string playerName = k_defaultClientPlayerName;
+        string serverIP = k_defaultServerIP;
+        ushort serverPort = k_defaultServerPort;
         if (LobbyManager.Instance != null)
         {
             //in case a player leaves gameplay and go back to lobby, they should not be in ready state right away
@@ -45,10 +49,8 @@ public class GameplayClientStateManager : StateManager
             playerName = LobbyManager.Instance.PlayerName;
             LobbyManager.Instance.JoinedLobby.Data.TryGetValue(LobbyManager.KEY_GAMEPLAY_SERVER_IP, out DataObject serverIPDataObject);
             serverIP = serverIPDataObject?.Value;
-            Debug.Log(serverIPDataObject?.Value);
             LobbyManager.Instance.JoinedLobby.Data.TryGetValue(LobbyManager.KEY_GAMEPLAY_SERVER_PORT, out DataObject serverPortDataObject);
             serverPort = ushort.Parse(serverPortDataObject?.Value);
-            Debug.Log(ushort.Parse(serverPortDataObject?.Value));
         }
 
         _networkManager = NetworkManager.Singleton;
