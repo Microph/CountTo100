@@ -79,7 +79,7 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
         {
             if (ex.ErrorCode == LobbyManager.NO_OPEN_LOBBIES_ERROR_CODE)
             {
-                _noOpenLobbiesFoundOverlay.SetMainText("No open lobbies founded.");
+                _noOpenLobbiesFoundOverlay.SetMainText("No open lobbies found.");
                 _noOpenLobbiesFoundOverlay.gameObject.SetActive(true);
             }
             else

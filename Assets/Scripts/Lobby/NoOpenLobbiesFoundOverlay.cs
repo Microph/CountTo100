@@ -55,7 +55,7 @@ public class NoOpenLobbiesFoundOverlay : MonoBehaviour
             Debug.LogException(ex);
             if (ex.ErrorCode == 16006)
             {
-                _mainText.text = "No open lobbies founded.";
+                _mainText.text = "No open lobbies found.";
             }
             else
             {
