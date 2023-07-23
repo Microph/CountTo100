@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using TMPro;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies;
@@ -157,7 +158,7 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
             }
             else
             {
-                ShowReadyButton(_lobbyManager.IsPlayerReady(_lobbyManager.CachedPlayerModel));
+                ShowReadyButton(!_lobbyManager.IsPlayerReady(lobby.Players.Find(player => player.Id == AuthenticationService.Instance.PlayerId)));
             }
         }
     }

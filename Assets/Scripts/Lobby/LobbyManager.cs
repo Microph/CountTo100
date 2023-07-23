@@ -29,13 +29,11 @@ public class LobbyManager : MonoSingleton<LobbyManager>
     public Lobby JoinedLobby => _joinedLobby;
     public int CurrentLocalStartGameplayTimes => _currentLocalStartGameplayTimes;
     public string PlayerName => _playerName;
-    public Player CachedPlayerModel => _cachedPlayerModel;
     
     private const float k_defaultLobbyHeartBeatTime = 15f;
     private const float k_defaultLobbyPollTime = 1.5f;
 
     private string _playerName;
-    private Player _cachedPlayerModel;
     private Lobby _joinedLobby;
     private bool _isHandlingLobbyHeartbeat = false;
     private bool _isHandlingLobbyPoll = false;
@@ -104,7 +102,7 @@ public class LobbyManager : MonoSingleton<LobbyManager>
     public async Task QuickJoinLobby()
     {
         QuickJoinLobbyOptions options = new QuickJoinLobbyOptions();
-        options.Player = GetPlayer();
+        options.Player = GenerateNewPlayerDataModel(_playerName);
         Lobby lobby = await LobbyService.Instance.QuickJoinLobbyAsync(options);
         _joinedLobby = lobby;
         OnJoinedLobby?.Invoke(this, new LobbyEventArgs { lobby = lobby });
@@ -114,7 +112,7 @@ public class LobbyManager : MonoSingleton<LobbyManager>
     {
         CreateLobbyOptions options = new CreateLobbyOptions
         {
-            Player = GetPlayer(),
+            Player = GenerateNewPlayerDataModel(_playerName),
             IsPrivate = false
         };
 
@@ -122,6 +120,13 @@ public class LobbyManager : MonoSingleton<LobbyManager>
         _joinedLobby = lobby;
         OnJoinedLobby?.Invoke(this, new LobbyEventArgs { lobby = lobby });
         Debug.Log("Created and joined a lobby");
+    }
+
+    public Player GenerateNewPlayerDataModel(string playerName)
+    {
+        return new Player(AuthenticationService.Instance.PlayerId, null, new Dictionary<string, PlayerDataObject> {
+            { KEY_PLAYER_NAME, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, playerName) },
+        });
     }
 
     public async Task UpdatePlayerReadyStatus(bool isPlayerReady)
@@ -227,14 +232,6 @@ public class LobbyManager : MonoSingleton<LobbyManager>
     private void OnJoinedLobbyUpdateCallback(object sender, LobbyEventArgs e)
     {
         CheckStartGameplay(e);
-    }
-
-    private Player GetPlayer()
-    {
-        _cachedPlayerModel ??= new Player(AuthenticationService.Instance.PlayerId, null, new Dictionary<string, PlayerDataObject> {
-            { KEY_PLAYER_NAME, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, _playerName) },
-        });
-        return _cachedPlayerModel;
     }
 
     private async void HandleLobbyHeartbeat()
