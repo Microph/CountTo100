@@ -37,7 +37,7 @@ public class GameplayServerServerStartedState : State
         _gameplayServerContext.NetworkManager.OnClientConnectedCallback += OnClientConnected;
         _gameplayServerContext.NetworkManager.OnClientDisconnectCallback += OnClientDisconnected;
         _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.OnPlayerReady += OnPlayerReady;
-        _gameplayServerContext.GameplaySceneManager.GameplayUIManager.ShowServerInfo($"Number of players: {GlobalServerConfigManager.LocalServerAllocationPayload.numberOfPlayers}\nServer port: {_gameplayServerContext.Transport.ConnectionData.Port}");
+        _gameplayServerContext.GameplaySceneManager.GameplayUIManager.ShowServerInfo($"Number of players: {GlobalServerConfigManager.LocalServerAllocationPayload.numberOfPlayers}\nBinding IP: {_gameplayServerContext.Transport.ConnectionData.Address}\nPort: {_gameplayServerContext.Transport.ConnectionData.Port}");
     }
 
     public override void OnExit()

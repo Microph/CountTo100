@@ -62,7 +62,7 @@ public class GameplayServerStateManager : NetworkStateManager
         _targetNumberOfPlayers = GlobalServerConfigManager.LocalServerAllocationPayload.numberOfPlayers;
         _networkManager.ConnectionApprovalCallback = ConnectionApprovalCheck;
         _networkManager.OnClientDisconnectCallback += OnClientDisconnected;
-        _transport.SetConnectionData("127.0.0.1", GlobalServerConfigManager.LocalServerAllocationPayload.serverPort);
+        _transport.SetConnectionData(GlobalServerConfigManager.LocalServerAllocationPayload.serverBindingIP, GlobalServerConfigManager.LocalServerAllocationPayload.serverPort);
         _networkManager.StartServer();
         await TaskHelper.When(() => IsServer && IsSpawned);
         Debug.Log("Server object spawned!");
