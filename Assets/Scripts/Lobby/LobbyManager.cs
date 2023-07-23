@@ -59,6 +59,17 @@ public class LobbyManager : MonoSingleton<LobbyManager>
         return playerReadyStatusValue != null && playerReadyStatusValue.Equals("1");
     }
 
+    public bool IsPlayerReady(Player player)
+    {
+        if(_joinedLobby == null)
+        {
+            return false;
+        }    
+
+        player.Data.TryGetValue(KEY_PLAYER_READY_STATUS, out PlayerDataObject playerReadyStatusDataObject);
+        return _joinedLobby.HostId == player.Id || (playerReadyStatusDataObject != null && playerReadyStatusDataObject.Value == "1");
+    }
+
     public bool AreAllPlayersReadyIgnoreHost(List<Player> players)
     {
         if (players == null || players.Count <= 1)
@@ -223,12 +234,6 @@ public class LobbyManager : MonoSingleton<LobbyManager>
             { KEY_PLAYER_NAME, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, _playerName) },
         });
         return _cachedPlayerModel;
-    }
-
-    private bool IsPlayerReady(Player player)
-    {
-        player.Data.TryGetValue(KEY_PLAYER_READY_STATUS, out PlayerDataObject playerReadyStatusDataObject);
-        return player.Id == _joinedLobby.HostId || (playerReadyStatusDataObject != null && playerReadyStatusDataObject.Value == "1");
     }
 
     private async void HandleLobbyHeartbeat()
