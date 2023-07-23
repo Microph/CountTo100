@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class MainMenuSceneManager : MonoSingleton<MainMenuSceneManager>
+public class MainMenuSceneManager : MonoBehaviour
 {
     [SerializeField] private Button _startAsServerButton;
     [SerializeField] private Button _startAsClientButton;
@@ -12,9 +12,8 @@ public class MainMenuSceneManager : MonoSingleton<MainMenuSceneManager>
     [SerializeField] private TMP_InputField _localServerBindingIPInputTextField;
     [SerializeField] private TMP_InputField _localServerPortInputTextField;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
         _startAsServerButton.onClick.AddListener(OnStartAsServerButtonClicked);
         _startAsClientButton.onClick.AddListener(OnStartAsClientButtonClicked);
     }

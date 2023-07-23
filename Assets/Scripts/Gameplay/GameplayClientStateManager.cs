@@ -31,7 +31,7 @@ public class GameplayClientStateManager : StateManager
     private NetworkManager _networkManager;
     private UnityTransport _transport;
 
-    public async Task InitializeAndStart()
+    public async Task InitializeAndStart(GameplaySceneManager gameplaySceneManager)
     {
         if (!GlobalClientConfig.IsClient)
         {
@@ -66,7 +66,7 @@ public class GameplayClientStateManager : StateManager
         SetState(new GameplayClientClientStartedState(
                 stateManager: this,
                 gameplayClientContext: new GameplayClientContext(
-                    gameplaySceneManager: GameplaySceneManager.Instance,
+                    gameplaySceneManager: gameplaySceneManager,
                     networkManager: _networkManager,
                     transport: _transport,
                     playerObject: _networkManager.LocalClient.PlayerObject.GetComponent<PlayerObject>()

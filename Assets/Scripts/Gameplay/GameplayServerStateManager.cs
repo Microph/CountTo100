@@ -47,7 +47,7 @@ public class GameplayServerStateManager : NetworkStateManager
     private int _targetNumberOfPlayers;
     private Dictionary<ulong, PlayerData> _connectedPlayerDataDict = new Dictionary<ulong, PlayerData>();
 
-    public async Task InitializeAndStart()
+    public async Task InitializeAndStart(GameplaySceneManager gameplaySceneManager)
     {
         if(!GlobalServerConfig.IsServer)
         {
@@ -69,7 +69,7 @@ public class GameplayServerStateManager : NetworkStateManager
         SetState(new GameplayServerServerStartedState(
                 stateManager: this,
                 gameplayServerContext: new GameplayServerContext(
-                    gameplaySceneManager: GameplaySceneManager.Instance,
+                    gameplaySceneManager: gameplaySceneManager,
                     networkManager: _networkManager,
                     transport: _transport,
                     targetNumberOfPlayers: _targetNumberOfPlayers,

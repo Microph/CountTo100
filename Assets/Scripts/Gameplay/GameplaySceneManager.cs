@@ -2,7 +2,7 @@ using CountTo100.Utilities;
 using System;
 using UnityEngine;
 
-public class GameplaySceneManager : MonoSingleton<GameplaySceneManager>
+public class GameplaySceneManager : MonoBehaviour
 {
     public GameplayServerStateManager GameplayServerStateManager => _gameplayServerStateManager;
     public GameplayClientStateManager GameplayClientStateManager => _gameplayClientStateManager;
@@ -14,23 +14,18 @@ public class GameplaySceneManager : MonoSingleton<GameplaySceneManager>
     [SerializeField] private InputManager _inputManager;
     [SerializeField] private GameplayUIManager _gameplayUIManager;
     
-    protected override void Awake()
-    {
-        base.Awake();
-    }
-
     private async void Start()
     {
         try
         {
             if (GlobalServerConfig.IsServer)
             {
-                await _gameplayServerStateManager.InitializeAndStart();
+                await _gameplayServerStateManager.InitializeAndStart(this);
             }
             else
             {
                 _gameplayUIManager.Initialize();
-                await _gameplayClientStateManager.InitializeAndStart();
+                await _gameplayClientStateManager.InitializeAndStart(this);
             }
         }
         catch (Exception ex)
