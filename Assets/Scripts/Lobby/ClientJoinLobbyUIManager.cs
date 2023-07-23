@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class ClientJoinLobbyUIManager : MonoBehaviour
 {
     [Header("EnterPlayerNameUIGroup")]
-    [SerializeField] private GameObject EnterPlayerNameUIGroup;
+    [SerializeField] private GameObject _enterPlayerNameUIGroup;
     [SerializeField] private NoOpenLobbiesFoundOverlay _noOpenLobbiesFoundOverlay;
     [SerializeField] private TMP_InputField _playerNameInputField;
     [SerializeField] private Button _joinALobbyButton;
@@ -21,8 +21,8 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
     [SerializeField] private Button _readyButton;
     [SerializeField] private Button _startGameButton;
 
-    [Header("StartGameHostConfigUIGroup")]
-    [SerializeField] private GameObject _startGameHostConfigUIGroup;
+    [Header("StartGameHostConfigUI")]
+    [SerializeField] private GameObject _startGameHostConfigUI;
     [SerializeField] private TMP_InputField _serverIPInputField;
     [SerializeField] private TMP_InputField _serverPortInputField;
 
@@ -34,6 +34,20 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
         _lobbyManager.OnJoinedLobby += OnJoinedLobby;
         _lobbyManager.OnJoinedLobbyUpdate += OnJoinedLobbyUpdate;
         _noOpenLobbiesFoundOverlay.Setup(_lobbyManager);
+        if (_lobbyManager.JoinedLobby == null)
+        {
+            ShowEnterPlayerNameUIGroup();
+        }
+        else
+        {
+            HideAllUIGroup();
+        }
+    }
+
+    public void HideAllUIGroup()
+    {
+        _enterPlayerNameUIGroup.SetActive(false);
+        _lobbyUIGroup.SetActive(false);
     }
 
     private void OnDestroy()
@@ -50,12 +64,11 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
         _joinALobbyButton.onClick.AddListener(OnJoinALobbyButtonClicked);
         _readyButton.onClick.AddListener(OnReadyButtonClicked);
         _startGameButton.onClick.AddListener(OnStartGameButtonClicked);
-        ShowEnterPlayerNameUIGroup();
     }
 
     private async void OnJoinALobbyButtonClicked()
     {
-        EnterPlayerNameUIGroup.SetActive(false);
+        _enterPlayerNameUIGroup.SetActive(false);
         try
         {
             await _lobbyManager.AuthenticateAndQuickJoinLobby(_playerNameInputField.text);
@@ -70,13 +83,13 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
             else
             {
                 Debug.LogException(ex);
-                EnterPlayerNameUIGroup.SetActive(true);
+                _enterPlayerNameUIGroup.SetActive(true);
             }
         }
         catch(Exception ex)
         {
             Debug.LogException(ex);
-            EnterPlayerNameUIGroup.SetActive(true);
+            _enterPlayerNameUIGroup.SetActive(true);
         }
     }
 
@@ -117,6 +130,7 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
     private void OnJoinedLobbyUpdate(object sender, LobbyManager.LobbyEventArgs e)
     {
         UpdateLobbyUI(e.lobby);
+        ShowLobbyUIGroup();
     }
 
     private void UpdateLobbyUI(Lobby lobby)
@@ -139,39 +153,40 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
         {
             if(AuthenticationService.Instance.PlayerId == lobby.HostId)
             {
-                ShowStartGameUIGroup(_lobbyManager.AreAllPlayersReadyIgnoreHost(lobby.Players));
+                ShowStartGameButtonAndHostConfigUI(_lobbyManager.AreAllPlayersReadyIgnoreHost(lobby.Players));
             }
             else
             {
-                ShowReadyButton();
+                ShowReadyButton(_lobbyManager.IsPlayerReady(_lobbyManager.CachedPlayerModel));
             }
         }
     }
 
-    private void ShowStartGameUIGroup(bool areAllPlayersReadyIgnoreHost)
-    {
-        _readyButton.gameObject.SetActive(false);
-        _startGameButton.interactable = areAllPlayersReadyIgnoreHost;
-        _startGameButton.gameObject.SetActive(true);
-        _startGameHostConfigUIGroup.SetActive(true);
-    }
-
-    private void ShowReadyButton()
-    {
-        _readyButton.gameObject.SetActive(true);
-        _startGameButton.gameObject.SetActive(false);
-        _startGameHostConfigUIGroup.SetActive(false);
-    }
-
     private void ShowEnterPlayerNameUIGroup()
     {
-        _lobbyUIGroup.SetActive(false);
-        EnterPlayerNameUIGroup.SetActive(true);
+        HideAllUIGroup();
+        _enterPlayerNameUIGroup.SetActive(true);
     }
 
     private void ShowLobbyUIGroup()
     {
+        HideAllUIGroup();
         _lobbyUIGroup.SetActive(true);
-        EnterPlayerNameUIGroup.SetActive(false);
+    }
+
+    private void ShowStartGameButtonAndHostConfigUI(bool isStartGameButtonInteractible)
+    {
+        _readyButton.gameObject.SetActive(false);
+        _startGameButton.interactable = isStartGameButtonInteractible;
+        _startGameButton.gameObject.SetActive(true);
+        _startGameHostConfigUI.SetActive(true);
+    }
+
+    private void ShowReadyButton(bool isReadyButtonInteractible)
+    {
+        _startGameButton.gameObject.SetActive(false);
+        _startGameHostConfigUI.SetActive(false);
+        _readyButton.interactable = isReadyButtonInteractible;
+        _readyButton.gameObject.SetActive(true);
     }
 }

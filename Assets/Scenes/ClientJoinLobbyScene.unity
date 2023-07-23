@@ -1600,7 +1600,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bd08ebcf7010d04b9a18603d755f7fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EnterPlayerNameUIGroup: {fileID: 1010565753}
+  _enterPlayerNameUIGroup: {fileID: 1010565753}
   _noOpenLobbiesFoundOverlay: {fileID: 1304652646}
   _playerNameInputField: {fileID: 438938807}
   _joinALobbyButton: {fileID: 687778131}
@@ -1609,7 +1609,7 @@ MonoBehaviour:
   _lobbyPlayerElementContentTransform: {fileID: 1002729632}
   _readyButton: {fileID: 144079063}
   _startGameButton: {fileID: 848884367}
-  _startGameHostConfigUIGroup: {fileID: 1677521647}
+  _startGameHostConfigUI: {fileID: 1677521647}
   _serverIPInputField: {fileID: 1034582052}
   _serverPortInputField: {fileID: 208080531}
 --- !u!1 &503905785
@@ -1829,7 +1829,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41df225eee941a74ab566a530d448eed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _lobbyManager: {fileID: 586012060}
   _clientJoinLobbyUIManager: {fileID: 489805234}
 --- !u!4 &569296889
 Transform:
@@ -4144,7 +4143,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1677521648}
   m_Layer: 5
-  m_Name: StartGameHostConfigUIGroup
+  m_Name: StartGameHostConfigUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

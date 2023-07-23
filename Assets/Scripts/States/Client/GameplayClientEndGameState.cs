@@ -31,8 +31,7 @@ public class GameplayClientEndGameState : State
 
     private void OnExitButtonClickedAction()
     {
-        //TODO: back to the same lobby instead
         _gameplayClientContext.NetworkManager.Shutdown();
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene("ClientJoinLobbyScene");
     }
 }

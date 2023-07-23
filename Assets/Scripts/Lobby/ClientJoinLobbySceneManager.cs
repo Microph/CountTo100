@@ -4,11 +4,10 @@ using UnityEngine;
 
 public class ClientJoinLobbySceneManager : MonoBehaviour
 {
-    [SerializeField] private LobbyManager _lobbyManager;
     [SerializeField] private ClientJoinLobbyUIManager _clientJoinLobbyUIManager;
 
-    private void Awake()
+    private void Start()
     {
-        _clientJoinLobbyUIManager.Setup(_lobbyManager);
+        _clientJoinLobbyUIManager.Setup(LobbyManager.Instance);
     }
 }
