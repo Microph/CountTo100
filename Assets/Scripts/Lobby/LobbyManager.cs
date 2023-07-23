@@ -190,6 +190,16 @@ public class LobbyManager : MonoSingleton<LobbyManager>
         OnJoinedLobbyUpdate?.Invoke(this, new LobbyEventArgs { lobby = _joinedLobby });
     }
 
+    public async Task LeaveCurrentLobby()
+    {
+        if (AuthenticationService.Instance == null || _joinedLobby == null)
+        {
+            return;
+        }
+
+        await LobbyService.Instance.RemovePlayerAsync(_joinedLobby.Id, AuthenticationService.Instance.PlayerId);
+    }
+
     protected override void Awake()
     {
         base.Awake();
@@ -283,16 +293,6 @@ public class LobbyManager : MonoSingleton<LobbyManager>
                 _isHandlingLobbyPoll = false;
             }
         }
-    }
-
-    private async Task LeaveCurrentLobby()
-    {
-        if (AuthenticationService.Instance == null || _joinedLobby == null)
-        {
-            return;
-        }
-
-        await LobbyService.Instance.RemovePlayerAsync(_joinedLobby.Id, AuthenticationService.Instance.PlayerId);
     }
 
     private void CheckStartGameplay(LobbyEventArgs e)
