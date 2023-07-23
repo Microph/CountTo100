@@ -1035,6 +1035,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 210400559}
   m_CullTransparentMesh: 1
+--- !u!1 &261843617
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 261843619}
+  - component: {fileID: 261843618}
+  m_Layer: 0
+  m_Name: PlayerLobbyElementObjectPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &261843618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 261843617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3da83c5a44f1dfb448ee267414f7a858, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _prefab: {fileID: 4424158178518891987, guid: 3e3b1f31220fabd4a8ce1d61b1d6c073, type: 3}
+--- !u!4 &261843619
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 261843617}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 524.4132, y: 262.73044, z: -2.3343098}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &311687522
 GameObject:
   m_ObjectHideFlags: 0
@@ -1606,6 +1651,7 @@ MonoBehaviour:
   _joinALobbyButton: {fileID: 687778131}
   _lobbyUIGroup: {fileID: 961600428}
   _lobbyPlayerElementPrefab: {fileID: 4998981095269643927, guid: 3e3b1f31220fabd4a8ce1d61b1d6c073, type: 3}
+  _lobbyPlayerElementObjectPool: {fileID: 261843618}
   _lobbyPlayerElementContentTransform: {fileID: 1002729632}
   _readyButton: {fileID: 144079063}
   _startGameButton: {fileID: 848884367}

@@ -1,3 +1,4 @@
+using CountTo100.Utilities;
 using System;
 using TMPro;
 using Unity.Services.Authentication;
@@ -17,6 +18,7 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
     [Header("LobbyUIGroup")]
     [SerializeField] private GameObject _lobbyUIGroup;
     [SerializeField] private LobbyPlayerElement _lobbyPlayerElementPrefab;
+    [SerializeField] private SimpleObjectPool _lobbyPlayerElementObjectPool;
     [SerializeField] private Transform _lobbyPlayerElementContentTransform;
     [SerializeField] private Button _readyButton;
     [SerializeField] private Button _startGameButton;
@@ -135,17 +137,17 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
 
     private void UpdateLobbyUI(Lobby lobby)
     {
-        //TODO: Use object pooling
         foreach (var obj in _lobbyPlayerElementContentTransform.GetComponentsInChildren<LobbyPlayerElement>())
         {
-            Destroy(obj.gameObject);
+            _lobbyPlayerElementObjectPool.ReturnObject(obj.gameObject);
         }
 
         foreach (Player player in lobby.Players)
         {
             player.Data.TryGetValue(LobbyManager.KEY_PLAYER_NAME, out PlayerDataObject playerNameDataObject);
             player.Data.TryGetValue(LobbyManager.KEY_PLAYER_READY_STATUS, out PlayerDataObject playerReadyStatusDataObject);
-            var newPlayerElement = Instantiate(_lobbyPlayerElementPrefab, _lobbyPlayerElementContentTransform);
+            LobbyPlayerElement newPlayerElement = _lobbyPlayerElementObjectPool.GetObjectInstance().GetComponent<LobbyPlayerElement>();
+            newPlayerElement.transform.SetParent(_lobbyPlayerElementContentTransform);
             newPlayerElement.Setup(playerNameDataObject?.Value, _lobbyManager.IsLobbyHost(player.Id), _lobbyManager.IsPlayerReady(player.Id, playerReadyStatusDataObject));
         }
 
