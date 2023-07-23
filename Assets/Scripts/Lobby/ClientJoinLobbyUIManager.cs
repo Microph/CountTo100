@@ -148,6 +148,7 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
             player.Data.TryGetValue(LobbyManager.KEY_PLAYER_READY_STATUS, out PlayerDataObject playerReadyStatusDataObject);
             LobbyPlayerElement newPlayerElement = _lobbyPlayerElementObjectPool.GetObjectInstance().GetComponent<LobbyPlayerElement>();
             newPlayerElement.transform.SetParent(_lobbyPlayerElementContentTransform);
+            newPlayerElement.transform.localScale = Vector3.one;
             newPlayerElement.Setup(playerNameDataObject?.Value, _lobbyManager.IsLobbyHost(player.Id), _lobbyManager.IsPlayerReady(player.Id, playerReadyStatusDataObject));
         }
 
