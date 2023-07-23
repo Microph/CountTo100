@@ -1,4 +1,3 @@
-using CountTo100.Utilities;
 using System;
 using UnityEngine;
 
