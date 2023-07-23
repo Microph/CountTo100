@@ -52,7 +52,7 @@ public class GameplayServerAllowCountingState : State
 
     private void OnPlayerCount(ulong clientId)
     {
-        if (_gameplayServerContext.ConnectedPlayerDataDict[clientId].CumulativeClicks > 5) 
+        if (_gameplayServerContext.ConnectedPlayerDataDict[clientId].CumulativeClicks >= 5) 
         {
             Debug.Log($"clientId {clientId} reached 5 clicks/sec limit");
             return;
