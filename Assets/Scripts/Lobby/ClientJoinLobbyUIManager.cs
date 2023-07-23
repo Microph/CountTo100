@@ -1,6 +1,7 @@
 using System;
 using TMPro;
 using Unity.Services.Authentication;
+using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,11 +10,12 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
 {
     [Header("EnterPlayerNameUIGroup")]
     [SerializeField] private GameObject EnterPlayerNameUIGroup;
+    [SerializeField] private NoOpenLobbiesFoundOverlay _noOpenLobbiesFoundOverlay;
     [SerializeField] private TMP_InputField _playerNameInputField;
     [SerializeField] private Button _joinALobbyButton;
 
     [Header("LobbyUIGroup")]
-    [SerializeField] private GameObject LobbyUIGroup;
+    [SerializeField] private GameObject _lobbyUIGroup;
     [SerializeField] private LobbyPlayerElement _lobbyPlayerElementPrefab;
     [SerializeField] private Transform _lobbyPlayerElementContentTransform;
     [SerializeField] private Button _readyButton;
@@ -31,6 +33,7 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
         _lobbyManager = lobbyManager;
         _lobbyManager.OnJoinedLobby += OnJoinedLobby;
         _lobbyManager.OnJoinedLobbyUpdate += OnJoinedLobbyUpdate;
+        _noOpenLobbiesFoundOverlay.Setup(_lobbyManager);
     }
 
     private void OnDestroy()
@@ -52,15 +55,28 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
 
     private async void OnJoinALobbyButtonClicked()
     {
-        _joinALobbyButton.interactable = false;
+        EnterPlayerNameUIGroup.SetActive(false);
         try
         {
             await _lobbyManager.AuthenticateAndQuickJoinLobby(_playerNameInputField.text);
         }
-        catch (Exception ex)
+        catch (LobbyServiceException ex)
+        {
+            if (ex.ErrorCode == LobbyManager.NO_OPEN_LOBBIES_ERROR_CODE)
+            {
+                _noOpenLobbiesFoundOverlay.SetMainText("No open lobbies founded.");
+                _noOpenLobbiesFoundOverlay.gameObject.SetActive(true);
+            }
+            else
+            {
+                Debug.LogException(ex);
+                EnterPlayerNameUIGroup.SetActive(true);
+            }
+        }
+        catch(Exception ex)
         {
             Debug.LogException(ex);
-            _joinALobbyButton.interactable = true;
+            EnterPlayerNameUIGroup.SetActive(true);
         }
     }
 
@@ -149,13 +165,13 @@ public class ClientJoinLobbyUIManager : MonoBehaviour
 
     private void ShowEnterPlayerNameUIGroup()
     {
-        LobbyUIGroup.SetActive(false);
+        _lobbyUIGroup.SetActive(false);
         EnterPlayerNameUIGroup.SetActive(true);
     }
 
     private void ShowLobbyUIGroup()
     {
-        LobbyUIGroup.SetActive(true);
+        _lobbyUIGroup.SetActive(true);
         EnterPlayerNameUIGroup.SetActive(false);
     }
 }

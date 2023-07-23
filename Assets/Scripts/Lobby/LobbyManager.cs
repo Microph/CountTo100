@@ -16,6 +16,8 @@ public class LobbyManager : MonoSingleton<LobbyManager>
     public const string KEY_HOST_START_GAMEPLAY_TIMES = "HostStartGameplayTimes";
     public const string KEY_GAMEPLAY_SERVER_IP = "GameplayServerIP";
     public const string KEY_GAMEPLAY_SERVER_PORT = "GameplayServerPort";
+    public const int DEFAULT_MAX_PLAYERS_IN_LOBBY = 3;
+    public const int NO_OPEN_LOBBIES_ERROR_CODE = 16006;
 
     public class LobbyEventArgs : EventArgs
     {
@@ -30,7 +32,6 @@ public class LobbyManager : MonoSingleton<LobbyManager>
     
     private const float k_defaultLobbyHeartBeatTime = 15f;
     private const float k_defaultLobbyPollTime = 1.5f;
-    private const int k_defaultMaxPlayersInLobby = 3;
 
     private string _playerName;
     private Player _cachedPlayerModel;
@@ -81,8 +82,34 @@ public class LobbyManager : MonoSingleton<LobbyManager>
         InitializationOptions initializationOptions = new InitializationOptions();
         initializationOptions.SetProfile(_playerName);
         await UnityServices.InitializeAsync(initializationOptions);
-        AuthenticationService.Instance.SignedIn += OnSignedIn;
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        if (AuthenticationService.Instance.IsSignedIn)
+        {
+            await QuickJoinLobby();
+        }
+    }
+
+    public async Task QuickJoinLobby()
+    {
+        QuickJoinLobbyOptions options = new QuickJoinLobbyOptions();
+        options.Player = GetPlayer();
+        Lobby lobby = await LobbyService.Instance.QuickJoinLobbyAsync(options);
+        _joinedLobby = lobby;
+        OnJoinedLobby?.Invoke(this, new LobbyEventArgs { lobby = lobby });
+    }
+
+    public async Task CreateAndJoinLobby(int maxPlayers)
+    {
+        CreateLobbyOptions options = new CreateLobbyOptions
+        {
+            Player = GetPlayer(),
+            IsPrivate = false
+        };
+
+        Lobby lobby = await LobbyService.Instance.CreateLobbyAsync(_playerName, maxPlayers, options);
+        _joinedLobby = lobby;
+        OnJoinedLobby?.Invoke(this, new LobbyEventArgs { lobby = lobby });
+        Debug.Log("Created and joined a lobby");
     }
 
     public async Task UpdatePlayerReadyStatus(bool isPlayerReady)
@@ -185,63 +212,9 @@ public class LobbyManager : MonoSingleton<LobbyManager>
         }
     }
 
-    private async void OnSignedIn()
-    {
-        AuthenticationService.Instance.SignedIn -= OnSignedIn;
-        bool getNoOpenLobbyError = false;
-        try
-        {
-            await QuickJoinLobby();
-        }
-        catch (LobbyServiceException ex)
-        {
-            getNoOpenLobbyError = ex.ErrorCode == 16006; //expect no open lobby error code
-            if(ex.ErrorCode != 16006)
-            {
-                Debug.LogException(ex);
-            }
-        }
-
-        if(getNoOpenLobbyError)
-        {
-            try
-            {
-                await CreateAndJoinLobby(k_defaultMaxPlayersInLobby);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogException(ex);
-            }
-        }
-    }
-
     private void OnJoinedLobbyUpdateCallback(object sender, LobbyEventArgs e)
     {
         CheckStartGameplay(e);
-    }
-
-    private async Task QuickJoinLobby()
-    {
-        QuickJoinLobbyOptions options = new QuickJoinLobbyOptions();
-        options.Player = GetPlayer();
-        Lobby lobby = await LobbyService.Instance.QuickJoinLobbyAsync(options);
-        _joinedLobby = lobby;
-        OnJoinedLobby?.Invoke(this, new LobbyEventArgs { lobby = lobby });
-        Debug.Log("Quick joined a lobby");
-    }
-
-    private async Task CreateAndJoinLobby(int maxPlayers)
-    {
-        CreateLobbyOptions options = new CreateLobbyOptions
-        {
-            Player = GetPlayer(),
-            IsPrivate = false
-        };
-
-        Lobby lobby = await LobbyService.Instance.CreateLobbyAsync(_playerName, maxPlayers, options);
-        _joinedLobby = lobby;
-        OnJoinedLobby?.Invoke(this, new LobbyEventArgs { lobby = lobby });
-        Debug.Log("Created and joined a lobby");
     }
 
     private Player GetPlayer()
