@@ -212,6 +212,7 @@ public class LobbyManager : MonoSingleton<LobbyManager>
         base.OnDestroy();
     }
 
+    //does not work in Windows build
     private async void OnApplicationQuit()
     {
         try
