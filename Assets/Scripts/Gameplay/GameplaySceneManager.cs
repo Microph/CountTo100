@@ -23,7 +23,7 @@ public class GameplaySceneManager : MonoSingleton<GameplaySceneManager>
     {
         try
         {
-            if (GlobalServerConfigManager.IsServer)
+            if (GlobalServerConfig.IsServer)
             {
                 await _gameplayServerStateManager.InitializeAndStart();
             }

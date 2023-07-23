@@ -1,16 +1,17 @@
-﻿using CountTo100.Utilities;
-
-public abstract class StateTransition
+﻿namespace CountTo100.Utilities
 {
-    public readonly Enums.State FromState, ToState;
-
-    protected StateTransition(Enums.State fromState, Enums.State toState)
+    public abstract class StateTransition
     {
-        FromState = fromState;
-        ToState = toState;
-    }
+        public readonly Enums.State FromState, ToState;
 
-    public virtual void OnTransit()
-    {
+        protected StateTransition(Enums.State fromState, Enums.State toState)
+        {
+            FromState = fromState;
+            ToState = toState;
+        }
+
+        public virtual void OnTransit()
+        {
+        }
     }
 }

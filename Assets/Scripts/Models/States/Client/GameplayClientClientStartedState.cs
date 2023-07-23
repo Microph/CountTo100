@@ -1,10 +1,4 @@
 using CountTo100.Utilities;
-using System;
-using System.Collections.Generic;
-using Unity.Netcode;
-using Unity.Netcode.Transports.UTP;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 using static GameplayClientStateManager;
 
 public class GameplayClientClientStartedState : State

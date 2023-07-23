@@ -1,5 +1,3 @@
-using CountTo100.Utilities;
-using System;
 using TMPro;
 using Unity.Collections;
 using Unity.Netcode;

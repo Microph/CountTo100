@@ -1,4 +1,7 @@
-public class Delegates
+namespace CountTo100.Utilities
 {
-    public delegate void ValueChangedAction<T>(T previousValue, T newValue);
+    public class Delegates
+    {
+        public delegate void ValueChangedAction<T>(T previousValue, T newValue);
+    }
 }

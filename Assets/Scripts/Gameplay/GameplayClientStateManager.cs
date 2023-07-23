@@ -33,7 +33,7 @@ public class GameplayClientStateManager : StateManager
 
     public async Task InitializeAndStart()
     {
-        if (!GlobalClientConfigManager.IsClient)
+        if (!GlobalClientConfig.IsClient)
         {
             Debug.LogWarning("Did not config as a client");
             return;

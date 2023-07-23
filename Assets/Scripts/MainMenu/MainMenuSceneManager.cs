@@ -21,19 +21,19 @@ public class MainMenuSceneManager : MonoSingleton<MainMenuSceneManager>
 
     private void OnStartAsServerButtonClicked()
     {
-        GlobalServerConfigManager.IsServer = true;
+        GlobalServerConfig.IsServer = true;
         //in local testing, simulate getting allocation payloads to get number of players, etc.
         //https://docs.unity.com/game-server-hosting/manual/concepts/allocations-payload
         int numberOfPlayersLocalServerConfig = int.Parse(_numberOfPlayersDropDown.options[_numberOfPlayersDropDown.value].text);
         string localServerBindingIP = _localServerBindingIPInputTextField.text;
         ushort localServerPort = ushort.Parse(_localServerPortInputTextField.text);
-        GlobalServerConfigManager.LocalServerAllocationPayload = new LocalServerAllocationPayload(numberOfPlayersLocalServerConfig, localServerBindingIP, localServerPort);
+        GlobalServerConfig.LocalServerAllocationPayload = new LocalServerAllocationPayload(numberOfPlayersLocalServerConfig, localServerBindingIP, localServerPort);
         SceneManager.LoadScene("Gameplay");
     }
 
     private void OnStartAsClientButtonClicked()
     {
-        GlobalServerConfigManager.IsServer = false;
+        GlobalServerConfig.IsServer = false;
         SceneManager.LoadScene("ClientJoinLobbyScene");
     }
 }

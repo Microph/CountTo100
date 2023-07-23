@@ -49,7 +49,7 @@ public class GameplayServerStateManager : NetworkStateManager
 
     public async Task InitializeAndStart()
     {
-        if(!GlobalServerConfigManager.IsServer)
+        if(!GlobalServerConfig.IsServer)
         {
             Debug.LogWarning("Did not config as a server");
             return;
@@ -59,10 +59,10 @@ public class GameplayServerStateManager : NetworkStateManager
         Debug.Assert(_networkManager != null);
         _transport = _networkManager.GetComponent<UnityTransport>();
         Debug.Assert(_transport != null);
-        _targetNumberOfPlayers = GlobalServerConfigManager.LocalServerAllocationPayload.numberOfPlayers;
+        _targetNumberOfPlayers = GlobalServerConfig.LocalServerAllocationPayload.numberOfPlayers;
         _networkManager.ConnectionApprovalCallback = ConnectionApprovalCheck;
         _networkManager.OnClientDisconnectCallback += OnClientDisconnected;
-        _transport.SetConnectionData(GlobalServerConfigManager.LocalServerAllocationPayload.serverBindingIP, GlobalServerConfigManager.LocalServerAllocationPayload.serverPort);
+        _transport.SetConnectionData(GlobalServerConfig.LocalServerAllocationPayload.serverBindingIP, GlobalServerConfig.LocalServerAllocationPayload.serverPort);
         _networkManager.StartServer();
         await TaskHelper.When(() => IsServer && IsSpawned);
         Debug.Log("Server object spawned!");
