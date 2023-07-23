@@ -95,6 +95,7 @@ public class GameplayClientStateManager : StateManager
         {
             try
             {
+                //LobbyManager's OnApplicationQuit is not called sometimes, so I call here again
                 await LobbyManager.Instance.LeaveCurrentLobby();
             }
             catch (Exception ex)
