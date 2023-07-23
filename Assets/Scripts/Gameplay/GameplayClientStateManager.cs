@@ -1,11 +1,9 @@
 ﻿using Unity.Netcode.Transports.UTP;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Threading.Tasks;
 using CountTo100.Utilities;
 using Unity.Services.Lobbies.Models;
-using System;
 
 public class GameplayClientStateManager : StateManager
 {
@@ -89,20 +87,13 @@ public class GameplayClientStateManager : StateManager
         return playerObject != null && playerObject.IsSpawned;
     }
 
-    private async void OnClientDisconnected(ulong clientId)
+    private void OnClientDisconnected(ulong clientId)
     {
         Debug.Log($"Disconnect reason: {_networkManager.DisconnectReason}");
-        if(LobbyManager.Instance != null )
-        {
-            try
-            {
-                await LobbyManager.Instance.LeaveCurrentLobby();
-            }
-            catch (Exception ex)
-            {
-                Debug.LogException(ex);
-            }
-        }
-        SceneManager.LoadScene("MainMenu");
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 }
