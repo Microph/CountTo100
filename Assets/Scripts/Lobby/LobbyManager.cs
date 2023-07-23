@@ -68,7 +68,7 @@ public class LobbyManager : MonoSingleton<LobbyManager>
 
         foreach (Player player in players)
         {
-            if (player.Id != _joinedLobby.HostId && !player.Data.ContainsKey(KEY_PLAYER_READY_STATUS))
+            if (!IsPlayerReady(player))
             {
                 return false;
             }
@@ -223,6 +223,12 @@ public class LobbyManager : MonoSingleton<LobbyManager>
             { KEY_PLAYER_NAME, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, _playerName) },
         });
         return _cachedPlayerModel;
+    }
+
+    private bool IsPlayerReady(Player player)
+    {
+        player.Data.TryGetValue(KEY_PLAYER_READY_STATUS, out PlayerDataObject playerReadyStatusDataObject);
+        return player.Id == _joinedLobby.HostId || (playerReadyStatusDataObject != null && playerReadyStatusDataObject.Value == "1");
     }
 
     private async void HandleLobbyHeartbeat()
