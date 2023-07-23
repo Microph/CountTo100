@@ -78,6 +78,7 @@ public class GameplayClientAllowCountingState : State
             return;
         }
 
+        _cumulativeClicks++;
         _gameplayClientContext.PlayerObject.PlayerCountServerRpc();
     }
 }
