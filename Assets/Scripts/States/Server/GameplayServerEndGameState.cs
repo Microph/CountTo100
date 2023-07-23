@@ -19,6 +19,7 @@ public class GameplayServerEndGameState : State
 
     public override void OnEnter()
     {
-        _gameplayServerContext.GameplaySceneManager.GameplayUIManager.ShowServerInfo($"Number of players: {GlobalServerConfigManager.LocalServerAllocationPayload.numberOfPlayers}\nBinding IP: {_gameplayServerContext.Transport.ConnectionData.Address}\nPort: {_gameplayServerContext.Transport.ConnectionData.Port}\nGame is over. Please shutdown this server.");
+        string serverAddress = string.IsNullOrEmpty(_gameplayServerContext.Transport.ConnectionData.Address) ? "localhost" : _gameplayServerContext.Transport.ConnectionData.Address;
+        _gameplayServerContext.GameplaySceneManager.GameplayUIManager.ShowServerInfo($"Number of players: {GlobalServerConfigManager.LocalServerAllocationPayload.numberOfPlayers}\nBinding IP: {serverAddress}\nPort: {_gameplayServerContext.Transport.ConnectionData.Port}\nGame is over. Please shutdown this server.");
     }
 }
