@@ -151,7 +151,7 @@ public class LobbyManager : MonoSingleton<LobbyManager>
         OnJoinedLobbyUpdate?.Invoke(this, new LobbyEventArgs { lobby = _joinedLobby });
     }
 
-    public async Task UpdateHostLobbyData(bool increaseHostStartGameplayTime, string serverIP, string serverPort)
+    public async Task UpdateHostLobbyData(bool lockLobby, bool increaseHostStartGameplayTime, string serverIP, string serverPort)
     {
         if (_joinedLobby == null)
         {
@@ -165,23 +165,26 @@ public class LobbyManager : MonoSingleton<LobbyManager>
             currentHostStartGameplayTimes = currentHostStartGameplayTimesDataObject == null ? 0 : int.Parse(currentHostStartGameplayTimesDataObject.Value);
         }
 
-        UpdateLobbyOptions options = new UpdateLobbyOptions();
-        options.Data = new Dictionary<string, DataObject>()
+        UpdateLobbyOptions options = new UpdateLobbyOptions
         {
+            IsLocked = lockLobby,
+            Data = new Dictionary<string, DataObject>()
             {
-                KEY_HOST_START_GAMEPLAY_TIMES, new DataObject(
-                    visibility: DataObject.VisibilityOptions.Member,
-                    value: (currentHostStartGameplayTimes + (increaseHostStartGameplayTime ? 1 : 0)).ToString())
-            },
-            {
-                KEY_GAMEPLAY_SERVER_IP, new DataObject(
-                    visibility: DataObject.VisibilityOptions.Member,
-                    value: serverIP)
-            },
-            {
-                KEY_GAMEPLAY_SERVER_PORT, new DataObject(
-                    visibility: DataObject.VisibilityOptions.Member,
-                    value: serverPort)
+                {
+                    KEY_HOST_START_GAMEPLAY_TIMES, new DataObject(
+                        visibility: DataObject.VisibilityOptions.Member,
+                        value: (currentHostStartGameplayTimes + (increaseHostStartGameplayTime ? 1 : 0)).ToString())
+                },
+                {
+                    KEY_GAMEPLAY_SERVER_IP, new DataObject(
+                        visibility: DataObject.VisibilityOptions.Member,
+                        value: serverIP)
+                },
+                {
+                    KEY_GAMEPLAY_SERVER_PORT, new DataObject(
+                        visibility: DataObject.VisibilityOptions.Member,
+                        value: serverPort)
+                }
             }
         };
 
