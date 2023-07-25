@@ -215,7 +215,7 @@ public class LobbyManager : MonoSingleton<LobbyManager>
         base.OnDestroy();
     }
 
-    //does not work in Windows build
+    //does not work if the application process is killed (need Unity's Relay to handle this instead)
     private async void OnApplicationQuit()
     {
         try

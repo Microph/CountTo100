@@ -95,7 +95,7 @@ public class GameplayClientStateManager : StateManager
         {
             try
             {
-                //LobbyManager's OnApplicationQuit does not work in Windows build, so I call it here
+                //LobbyManager's OnApplicationQuit does not work if the application process is killed, so I call it here too
                 await LobbyManager.Instance.LeaveCurrentLobby();
             }
             catch (Exception ex)
