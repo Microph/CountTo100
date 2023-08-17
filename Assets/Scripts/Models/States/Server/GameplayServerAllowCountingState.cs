@@ -44,7 +44,7 @@ public class GameplayServerAllowCountingState : State
             playerData.CumulativeClicksResetTimer += Time.deltaTime;
             if(playerData.CumulativeClicksResetTimer >= 1)
             {
-                playerData.CumulativeClicksResetTimer = 0;
+                playerData.CumulativeClicksResetTimer -= 1;
                 playerData.CumulativeClicks = 0;
             }
         }

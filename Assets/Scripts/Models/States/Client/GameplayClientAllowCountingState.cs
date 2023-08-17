@@ -52,7 +52,7 @@ public class GameplayClientAllowCountingState : State
         _cumulativeClicksResetTimer += Time.deltaTime;
         if (_cumulativeClicksResetTimer >= 1)
         {
-            _cumulativeClicksResetTimer = 0;
+            _cumulativeClicksResetTimer -= 1;
             _cumulativeClicks = 0;
         }
     }
