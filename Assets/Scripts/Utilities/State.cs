@@ -2,14 +2,15 @@ using System.Collections.Generic;
 
 namespace CountTo100.Utilities
 {
-    public abstract class State
+    public abstract class State<T>
     {
         public readonly Enums.State StateEnum;
         public readonly Dictionary<(Enums.State, Enums.State), StateTransition> AvailableStateTransitions;
 
-        protected IStateManageable _stateManager;
+        protected IStateManageable<T> _stateManager;
+        protected T _context;
 
-        protected State(Enums.State stateEnum, IEnumerable<StateTransition> availableStateTransitions, IStateManageable stateManager)
+        protected State(Enums.State stateEnum, IEnumerable<StateTransition> availableStateTransitions, IStateManageable<T> stateManager)
         {
             StateEnum = stateEnum;
             AvailableStateTransitions = new Dictionary<(Enums.State, Enums.State), StateTransition>();
@@ -18,6 +19,12 @@ namespace CountTo100.Utilities
             {
                 AvailableStateTransitions.Add((transition.FromState, transition.ToState), transition);
             }
+        }
+
+        public virtual void Initialize(IStateManageable<T> stateManager, T context)
+        {
+            _stateManager = stateManager;
+            _context = context;
         }
 
         public virtual void OnEnter()

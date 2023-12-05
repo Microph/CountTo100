@@ -1,7 +1,7 @@
 using CountTo100.Utilities;
 
-public interface IStateManageable
+public interface IStateManageable<T>
 {
-    public void SetState(State state);
-    public void TransitTo(State state);
+    public void SetState(State<T> state, T context);
+    public void TransitTo(State<T> state, T context);
 }

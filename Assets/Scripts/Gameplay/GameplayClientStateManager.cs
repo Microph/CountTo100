@@ -5,18 +5,21 @@ using System.Threading.Tasks;
 using CountTo100.Utilities;
 using Unity.Services.Lobbies.Models;
 using System;
+using static GameplayClientStateManager;
 
-public class GameplayClientStateManager : StateManager
+public class GameplayClientStateManager : StateManager<GameplayClientContext>
 {
     public class GameplayClientContext
     {
+        public GameplayClientStates GameplayClientStates;
         public GameplaySceneManager GameplaySceneManager;
         public NetworkManager NetworkManager;
         public UnityTransport Transport;
         public PlayerObject PlayerObject;
 
-        public GameplayClientContext(GameplaySceneManager gameplaySceneManager, NetworkManager networkManager, UnityTransport transport, PlayerObject playerObject)
+        public GameplayClientContext(GameplayClientStates gameplayClientStates, GameplaySceneManager gameplaySceneManager, NetworkManager networkManager, UnityTransport transport, PlayerObject playerObject)
         {
+            GameplayClientStates = gameplayClientStates;
             GameplaySceneManager = gameplaySceneManager;
             NetworkManager = networkManager;
             Transport = transport;
@@ -63,15 +66,15 @@ public class GameplayClientStateManager : StateManager
         _networkManager.StartClient();
         await TaskHelper.When(() => _networkManager.IsConnectedClient && IsPlayerObjectSpawned(_networkManager.LocalClient.PlayerObject));
         Debug.Log("Client is connected and player object is spawned!");
-        SetState(new GameplayClientClientStartedState(
-                stateManager: this,
-                gameplayClientContext: new GameplayClientContext(
+        SetState(
+            state: new GameplayClientClientStartedState(),
+            context: new GameplayClientContext(
+                    gameplayClientStates: new GameplayClientStates(),
                     gameplaySceneManager: gameplaySceneManager,
                     networkManager: _networkManager,
                     transport: _transport,
                     playerObject: _networkManager.LocalClient.PlayerObject.GetComponent<PlayerObject>()
                 )
-            )
         );
     }
 

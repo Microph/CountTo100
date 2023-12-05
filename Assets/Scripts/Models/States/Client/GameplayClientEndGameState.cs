@@ -2,36 +2,33 @@
 using UnityEngine.SceneManagement;
 using static GameplayClientStateManager;
 
-public class GameplayClientEndGameState : State
+public class GameplayClientEndGameState : State<GameplayClientContext>
 {
-    private GameplayClientContext _gameplayClientContext;
-
-    public GameplayClientEndGameState(IStateManageable stateManager, GameplayClientContext gameplayClientContext) 
+    public GameplayClientEndGameState() 
         : base(
             stateEnum: Enums.State.GameplayClient_EndGame,
-            stateManager: stateManager,
             availableStateTransitions: new StateTransition[]
             {
-            }
+            },
+            stateManager: null
         )
     {
-        _gameplayClientContext = gameplayClientContext;
     }
 
     public override void OnEnter()
     {
-        ulong winnerId = _gameplayClientContext.GameplaySceneManager.GameplayServerStateManager.NVLatestClickerId.Value;
-        _gameplayClientContext.GameplaySceneManager.GameplayUIManager.SetWinnerTextAndExitButtonAction(
-            playerName: _gameplayClientContext.GameplaySceneManager.GameplayServerStateManager.NVWinnerClickerName.Value.ToString(),
+        ulong winnerId = _context.GameplaySceneManager.GameplayServerStateManager.NVLatestClickerId.Value;
+        _context.GameplaySceneManager.GameplayUIManager.SetWinnerTextAndExitButtonAction(
+            playerName: _context.GameplaySceneManager.GameplayServerStateManager.NVWinnerClickerName.Value.ToString(),
             clientId: winnerId,
             onExitButtonClickedAction: OnExitButtonClickedAction 
         );
-        _gameplayClientContext.GameplaySceneManager.GameplayUIManager.ShowWinnerTextAndExitButton();
+        _context.GameplaySceneManager.GameplayUIManager.ShowWinnerTextAndExitButton();
     }
 
     private void OnExitButtonClickedAction()
     {
-        _gameplayClientContext.NetworkManager.Shutdown();
+        _context.NetworkManager.Shutdown();
         SceneManager.LoadScene("ClientJoinLobbyScene");
     }
 }

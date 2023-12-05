@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace CountTo100.Utilities
 {
-    public abstract class StateManager : MonoBehaviour, IStateManageable
+    public abstract class StateManager<T> : MonoBehaviour, IStateManageable<T>
     {
         public event Delegates.ValueChangedAction<Enums.State> OnGameplayClientStateChanged;
 
@@ -10,17 +10,18 @@ namespace CountTo100.Utilities
 
         private const Enums.State k_defaultState = Enums.State.None;
 
-        private State _currentState = null;
+        private State<T> _currentState = null;
 
-        public virtual void SetState(State state)
+        public virtual void SetState(State<T> state, T context)
         {
             Enums.State prevStateEnum = _currentState == null ? Enums.State.None : _currentState.StateEnum;
             _currentState = state;
+            _currentState.Initialize(this, context);
             OnGameplayClientStateChanged?.Invoke(prevStateEnum, _currentState.StateEnum);
             _currentState.OnEnter();
         }
 
-        public virtual void TransitTo(State newState)
+        public virtual void TransitTo(State<T> newState, T context)
         {
             if (!_currentState.AvailableStateTransitions.ContainsKey((CurrentStateEnum, newState.StateEnum)))
             {
@@ -30,7 +31,7 @@ namespace CountTo100.Utilities
 
             _currentState.OnExit();
             _currentState.AvailableStateTransitions[(CurrentStateEnum, newState.StateEnum)].OnTransit();
-            SetState(newState);
+            SetState(newState, context);
         }
 
         protected virtual void Update()

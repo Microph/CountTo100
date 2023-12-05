@@ -1,24 +1,18 @@
 using CountTo100.Utilities;
 using static GameplayClientStateManager;
 
-public class GameplayClientClientStartedState : State
+public class GameplayClientClientStartedState : State<GameplayClientContext>
 {
-    GameplayClientContext _gameplayClientContext;
-
-    public GameplayClientClientStartedState(
-        IStateManageable stateManager,
-        GameplayClientContext gameplayClientContext
-    )
+    public GameplayClientClientStartedState()
         : base(
             stateEnum: Enums.State.GameplayClient_ClientStarted,
-            stateManager: stateManager,
             availableStateTransitions: new StateTransition[]
             {
                 new BeginGameplayCountDownStateTransition()
-            }
+            },
+            stateManager: null
         )
     {
-        _gameplayClientContext = gameplayClientContext;
     }
 
     public class BeginGameplayCountDownStateTransition : StateTransition
@@ -31,21 +25,21 @@ public class GameplayClientClientStartedState : State
 
     public override void OnEnter()
     {
-        _gameplayClientContext.GameplaySceneManager.GameplayServerStateManager.NVCurrentStateEnum.OnValueChanged += OnGameplayServerStateChanged;
-        _gameplayClientContext.GameplaySceneManager.GameplayUIManager.ShowWaitingForPlayerText();
-        _gameplayClientContext.PlayerObject.PlayerReadyServerRpc();
+        _context.GameplaySceneManager.GameplayServerStateManager.NVCurrentStateEnum.OnValueChanged += OnGameplayServerStateChanged;
+        _context.GameplaySceneManager.GameplayUIManager.ShowWaitingForPlayerText();
+        _context.PlayerObject.PlayerReadyServerRpc();
     }
 
     public override void OnExit()
     {
-        _gameplayClientContext.GameplaySceneManager.GameplayServerStateManager.NVCurrentStateEnum.OnValueChanged -= OnGameplayServerStateChanged;
+        _context.GameplaySceneManager.GameplayServerStateManager.NVCurrentStateEnum.OnValueChanged -= OnGameplayServerStateChanged;
     }
 
     private void OnGameplayServerStateChanged(Enums.State previousValue, Enums.State newValue)
     {
         if(newValue == Enums.State.GameplayServer_BeginGameplayCountDown)
         {
-            _stateManager.TransitTo(new GameplayClientBeginGameplayCountDownState(_stateManager, _gameplayClientContext));
+            _stateManager.TransitTo(_context.GameplayClientStates.GameplayClientBeginGameplayCountDownState, _context);
         }
     }
 }

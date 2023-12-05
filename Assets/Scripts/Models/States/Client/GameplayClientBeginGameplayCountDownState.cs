@@ -2,27 +2,22 @@ using CountTo100.Utilities;
 using UnityEngine;
 using static GameplayClientStateManager;
 
-public class GameplayClientBeginGameplayCountDownState : State
+public class GameplayClientBeginGameplayCountDownState : State<GameplayClientContext>
 {
     private const float k_defaultCountDownTime = 3;
 
-    private GameplayClientContext _gameplayClientContext;
     private float _currentCountDownTime = 0;
 
-    public GameplayClientBeginGameplayCountDownState(
-        IStateManageable stateManager,
-        GameplayClientContext gameplayClientContext
-    )
+    public GameplayClientBeginGameplayCountDownState()
         : base(
             stateEnum: Enums.State.GameplayClient_BeginGameplayCountDown,
-            stateManager: stateManager,
             availableStateTransitions: new StateTransition[]
             {
                 new AllowCountingStateTransition()
-            }
+            },
+            stateManager: null
         )
     {
-        _gameplayClientContext = gameplayClientContext;
     }
 
     public class AllowCountingStateTransition : StateTransition
@@ -36,26 +31,25 @@ public class GameplayClientBeginGameplayCountDownState : State
     public override void OnEnter()
     {
         _currentCountDownTime = k_defaultCountDownTime;
-        _gameplayClientContext.GameplaySceneManager.GameplayServerStateManager.NVCurrentStateEnum.OnValueChanged += OnGameplayServerStateChanged;
-        _gameplayClientContext.GameplaySceneManager.GameplayUIManager.UpdateCountDownStartGameplayNumber(Mathf.CeilToInt(_currentCountDownTime));
-        _gameplayClientContext.GameplaySceneManager.GameplayUIManager.ShowCountDownStartGameplayText();
+        _context.GameplaySceneManager.GameplayServerStateManager.NVCurrentStateEnum.OnValueChanged += OnGameplayServerStateChanged;
+        _context.GameplaySceneManager.GameplayUIManager.UpdateCountDownStartGameplayNumber(Mathf.CeilToInt(_currentCountDownTime));
+        _context.GameplaySceneManager.GameplayUIManager.ShowCountDownStartGameplayText();
     }
 
     public override void OnExit()
     {
-        _gameplayClientContext.GameplaySceneManager.GameplayServerStateManager.NVCurrentStateEnum.OnValueChanged -= OnGameplayServerStateChanged;
+        _context.GameplaySceneManager.GameplayServerStateManager.NVCurrentStateEnum.OnValueChanged -= OnGameplayServerStateChanged;
     }
 
     public override void OnUpdate()
     {
         _currentCountDownTime -= Time.deltaTime;
-        _gameplayClientContext.GameplaySceneManager.GameplayUIManager.UpdateCountDownStartGameplayNumber(Mathf.CeilToInt(_currentCountDownTime));
+        _context.GameplaySceneManager.GameplayUIManager.UpdateCountDownStartGameplayNumber(Mathf.CeilToInt(_currentCountDownTime));
         if (_currentCountDownTime <= 0)
         {
             _currentCountDownTime = 0;
-            _gameplayClientContext.GameplaySceneManager.GameplayUIManager.UpdateCountDownStartGameplayNumber(Mathf.CeilToInt(_currentCountDownTime));
-            //_stateManager.TransitTo(new GameplayClientAllowCountingState(_stateManager, _gameplayClientContext));
-            //TODO: GameplayStates.Instance.GameplayClientAllowCountingState.TransitionToThisState(_stateManager, _gameplayClientContext);
+            _context.GameplaySceneManager.GameplayUIManager.UpdateCountDownStartGameplayNumber(Mathf.CeilToInt(_currentCountDownTime));
+            _stateManager.TransitTo(_context.GameplayClientStates.GameplayClientAllowCountingState, _context);
         }
     }
 
@@ -64,8 +58,7 @@ public class GameplayClientBeginGameplayCountDownState : State
         //in case client countdown slower than server does -> skip right to counting state
         if(newState == Enums.State.GameplayServer_AllowCounting)
         {
-            //_stateManager.TransitTo(new GameplayClientAllowCountingState(_stateManager, _gameplayClientContext));
-            //TODO: GameplayStates.Instance.GameplayClientAllowCountingState.TransitionToThisState(_stateManager, _gameplayClientContext);
+            _stateManager.TransitTo(_context.GameplayClientStates.GameplayClientAllowCountingState, _context);
         }
     }
 }

@@ -2,9 +2,8 @@
 using UnityEngine;
 using static GameplayClientStateManager;
 
-public class GameplayClientAllowCountingState : State
+public class GameplayClientAllowCountingState : State<GameplayClientContext>
 {
-    private GameplayClientContext _gameplayClientContext;
     private float _cumulativeClicksResetTimer;
     private int _cumulativeClicks;
 
@@ -28,29 +27,22 @@ public class GameplayClientAllowCountingState : State
         }
     }
 
-    public void TransitionToThisState(IStateManageable stateManager, GameplayClientContext gameplayClientContext)
-    {
-        _stateManager = stateManager;
-        _gameplayClientContext = gameplayClientContext;
-        _stateManager.TransitTo(this);
-    }
-
     public override void OnEnter()
     {
-        _gameplayClientContext.GameplaySceneManager.GameplayUIManager.UpdateGameplayScoreText(0);
-        _gameplayClientContext.GameplaySceneManager.GameplayUIManager.ShowCurrentGameplayScoreText();
-        _gameplayClientContext.GameplaySceneManager.GameplayServerStateManager.NVCurrentScore.OnValueChanged += OnCurrentScoreValueChanged;
-        _gameplayClientContext.GameplaySceneManager.GameplayServerStateManager.NVCurrentStateEnum.OnValueChanged += OnGameplayServerStateChanged;
-        _gameplayClientContext.GameplaySceneManager.InputManager.PlayerClickAction = PlayerClickAction;
+        _context.GameplaySceneManager.GameplayUIManager.UpdateGameplayScoreText(0);
+        _context.GameplaySceneManager.GameplayUIManager.ShowCurrentGameplayScoreText();
+        _context.GameplaySceneManager.GameplayServerStateManager.NVCurrentScore.OnValueChanged += OnCurrentScoreValueChanged;
+        _context.GameplaySceneManager.GameplayServerStateManager.NVCurrentStateEnum.OnValueChanged += OnGameplayServerStateChanged;
+        _context.GameplaySceneManager.InputManager.PlayerClickAction = PlayerClickAction;
         _cumulativeClicksResetTimer = 0;
         _cumulativeClicks = 0;
     }
 
     public override void OnExit()
     {
-        _gameplayClientContext.GameplaySceneManager.GameplayServerStateManager.NVCurrentScore.OnValueChanged -= OnCurrentScoreValueChanged;
-        _gameplayClientContext.GameplaySceneManager.GameplayServerStateManager.NVCurrentStateEnum.OnValueChanged -= OnGameplayServerStateChanged;
-        _gameplayClientContext.GameplaySceneManager.InputManager.PlayerClickAction = null;
+        _context.GameplaySceneManager.GameplayServerStateManager.NVCurrentScore.OnValueChanged -= OnCurrentScoreValueChanged;
+        _context.GameplaySceneManager.GameplayServerStateManager.NVCurrentStateEnum.OnValueChanged -= OnGameplayServerStateChanged;
+        _context.GameplaySceneManager.InputManager.PlayerClickAction = null;
     }
 
     public override void OnUpdate()
@@ -65,14 +57,14 @@ public class GameplayClientAllowCountingState : State
 
     private void OnCurrentScoreValueChanged(int _, int newValue)
     {
-        _gameplayClientContext.GameplaySceneManager.GameplayUIManager.UpdateGameplayScoreText(newValue);
+        _context.GameplaySceneManager.GameplayUIManager.UpdateGameplayScoreText(newValue);
     }
 
     private void OnGameplayServerStateChanged(Enums.State _, Enums.State newState)
     {
         if(newState == Enums.State.GameplayServer_EndGame)
         {
-            _stateManager.TransitTo(new GameplayClientEndGameState(_stateManager, _gameplayClientContext));
+            _stateManager.TransitTo(_context.GameplayClientStates.GameplayClientEndGameState, _context);
         }
     }
 
@@ -85,6 +77,6 @@ public class GameplayClientAllowCountingState : State
         }
 
         _cumulativeClicks++;
-        _gameplayClientContext.PlayerObject.PlayerCountServerRpc();
+        _context.PlayerObject.PlayerCountServerRpc();
     }
 }
