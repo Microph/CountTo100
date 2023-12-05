@@ -7,13 +7,13 @@ namespace CountTo100.Utilities
         public readonly Enums.State StateEnum;
         public readonly Dictionary<(Enums.State, Enums.State), StateTransition> AvailableStateTransitions;
 
-        protected readonly IStateManageable _stateManager;
+        protected IStateManageable _stateManager;
 
-        protected State(Enums.State stateEnum, IStateManageable stateManager, IEnumerable<StateTransition> availableStateTransitions)
+        protected State(Enums.State stateEnum, IEnumerable<StateTransition> availableStateTransitions, IStateManageable stateManager)
         {
             StateEnum = stateEnum;
-            _stateManager = stateManager;
             AvailableStateTransitions = new Dictionary<(Enums.State, Enums.State), StateTransition>();
+            _stateManager = stateManager;
             foreach (var transition in availableStateTransitions)
             {
                 AvailableStateTransitions.Add((transition.FromState, transition.ToState), transition);

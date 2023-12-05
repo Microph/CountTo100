@@ -8,17 +8,16 @@ public class GameplayClientAllowCountingState : State
     private float _cumulativeClicksResetTimer;
     private int _cumulativeClicks;
 
-    public GameplayClientAllowCountingState(IStateManageable stateManager, GameplayClientContext gameplayClientContext) 
+    public GameplayClientAllowCountingState() 
         : base(
             stateEnum: Enums.State.GameplayClient_AllowCounting,
-            stateManager: stateManager,
             availableStateTransitions: new StateTransition[]
             {
                 new EndGameStateTransition()
-            }
+            },
+            stateManager: null
         )
     {
-        _gameplayClientContext = gameplayClientContext;
     }
 
     public class EndGameStateTransition : StateTransition
@@ -27,6 +26,13 @@ public class GameplayClientAllowCountingState : State
             : base(Enums.State.GameplayClient_AllowCounting, Enums.State.GameplayClient_EndGame)
         {
         }
+    }
+
+    public void TransitionToThisState(IStateManageable stateManager, GameplayClientContext gameplayClientContext)
+    {
+        _stateManager = stateManager;
+        _gameplayClientContext = gameplayClientContext;
+        _stateManager.TransitTo(this);
     }
 
     public override void OnEnter()

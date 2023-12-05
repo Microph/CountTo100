@@ -54,7 +54,8 @@ public class GameplayClientBeginGameplayCountDownState : State
         {
             _currentCountDownTime = 0;
             _gameplayClientContext.GameplaySceneManager.GameplayUIManager.UpdateCountDownStartGameplayNumber(Mathf.CeilToInt(_currentCountDownTime));
-            _stateManager.TransitTo(new GameplayClientAllowCountingState(_stateManager, _gameplayClientContext));
+            //_stateManager.TransitTo(new GameplayClientAllowCountingState(_stateManager, _gameplayClientContext));
+            //TODO: GameplayStates.Instance.GameplayClientAllowCountingState.TransitionToThisState(_stateManager, _gameplayClientContext);
         }
     }
 
@@ -63,7 +64,8 @@ public class GameplayClientBeginGameplayCountDownState : State
         //in case client countdown slower than server does -> skip right to counting state
         if(newState == Enums.State.GameplayServer_AllowCounting)
         {
-            _stateManager.TransitTo(new GameplayClientAllowCountingState(_stateManager, _gameplayClientContext));
+            //_stateManager.TransitTo(new GameplayClientAllowCountingState(_stateManager, _gameplayClientContext));
+            //TODO: GameplayStates.Instance.GameplayClientAllowCountingState.TransitionToThisState(_stateManager, _gameplayClientContext);
         }
     }
 }
