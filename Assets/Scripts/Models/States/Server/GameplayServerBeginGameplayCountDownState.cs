@@ -2,24 +2,22 @@ using CountTo100.Utilities;
 using UnityEngine;
 using static GameplayServerStateManager;
 
-public class GameplayServerBeginGameplayCountDownState : State
+public class GameplayServerBeginGameplayCountDownState : State<GameplayServerContext>
 {
     private const float k_defaultCountDownTime = 3;
 
-    private GameplayServerContext _gameplayServerContext;
     private float _currentCountDownTime = 0;
 
-    public GameplayServerBeginGameplayCountDownState(IStateManageable stateManager, GameplayServerContext gameplayServerContext)
+    public GameplayServerBeginGameplayCountDownState()
         : base(
             stateEnum: Enums.State.GameplayServer_BeginGameplayCountDown,
-            stateManager: stateManager,
             availableStateTransitions: new StateTransition[]
             {
                 new AllowCountingStateTransition()
-            }
+            },
+            stateManager: null
         )
     {
-        _gameplayServerContext = gameplayServerContext;
     }
 
     public class AllowCountingStateTransition : StateTransition
@@ -41,7 +39,7 @@ public class GameplayServerBeginGameplayCountDownState : State
         if(_currentCountDownTime <= 0 ) 
         {
             _currentCountDownTime = 0;
-            _stateManager.TransitTo(new GameplayServerAllowCountingState(_stateManager, _gameplayServerContext));
+            _stateManager.TransitTo(_context.GameplayServerStates.GameplayServerAllowCountingState, _context);
         }
     }
 }

@@ -1,25 +1,22 @@
 ﻿using CountTo100.Utilities;
 using static GameplayServerStateManager;
 
-public class GameplayServerEndGameState : State
+public class GameplayServerEndGameState : State<GameplayServerContext>
 {
-    private GameplayServerContext _gameplayServerContext;
-
-    public GameplayServerEndGameState(IStateManageable stateManager, GameplayServerContext gameplayServerContext) 
+    public GameplayServerEndGameState() 
         : base(
             stateEnum: Enums.State.GameplayServer_EndGame,
-            stateManager: stateManager,
             availableStateTransitions: new StateTransition[]
             {
-            }
+            },
+            stateManager: null
         )
     {
-        _gameplayServerContext = gameplayServerContext;
     }
 
     public override void OnEnter()
     {
-        string serverAddress = string.IsNullOrEmpty(_gameplayServerContext.Transport.ConnectionData.Address) ? "localhost" : _gameplayServerContext.Transport.ConnectionData.Address;
-        _gameplayServerContext.GameplaySceneManager.GameplayUIManager.ShowServerInfo($"Number of players: {GlobalServerConfig.LocalServerAllocationPayload.numberOfPlayers}\nBinding IP: {serverAddress}\nPort: {_gameplayServerContext.Transport.ConnectionData.Port}\nGame is over. Please shutdown this server.");
+        string serverAddress = string.IsNullOrEmpty(_context.Transport.ConnectionData.Address) ? "localhost" : _context.Transport.ConnectionData.Address;
+        _context.GameplaySceneManager.GameplayUIManager.ShowServerInfo($"Number of players: {GlobalServerConfig.LocalServerAllocationPayload.numberOfPlayers}\nBinding IP: {serverAddress}\nPort: {_context.Transport.ConnectionData.Port}\nGame is over. Please shutdown this server.");
     }
 }

@@ -7,11 +7,13 @@ using System.Threading.Tasks;
 using System;
 using System.Linq;
 using Unity.Collections;
+using static GameplayServerStateManager;
 
-public class GameplayServerStateManager : NetworkStateManager
+public class GameplayServerStateManager : NetworkStateManager<GameplayServerContext>
 {
     public class GameplayServerContext
     {
+        public GameplayServerStates GameplayServerStates;
         public GameplaySceneManager GameplaySceneManager;
         public NetworkManager NetworkManager;
         public UnityTransport Transport;
@@ -20,8 +22,9 @@ public class GameplayServerStateManager : NetworkStateManager
         public PlayerObject PlayerPrefab;
         public Transform[] PlayerPositionTransforms;
 
-        public GameplayServerContext(GameplaySceneManager gameplaySceneManager, NetworkManager networkManager, UnityTransport transport, int targetNumberOfPlayers, Dictionary<ulong, PlayerData> connectedPlayerDataDict, PlayerObject playerPrefab, Transform[] playerPositionTransforms)
+        public GameplayServerContext(GameplayServerStates gameplayServerStates, GameplaySceneManager gameplaySceneManager, NetworkManager networkManager, UnityTransport transport, int targetNumberOfPlayers, Dictionary<ulong, PlayerData> connectedPlayerDataDict, PlayerObject playerPrefab, Transform[] playerPositionTransforms)
         {
+            GameplayServerStates = gameplayServerStates;
             GameplaySceneManager = gameplaySceneManager;
             NetworkManager = networkManager;
             Transport = transport;
@@ -66,17 +69,18 @@ public class GameplayServerStateManager : NetworkStateManager
         _networkManager.StartServer();
         await TaskHelper.When(() => IsServer && IsSpawned);
         Debug.Log("Server object spawned!");
-        SetState(new GameplayServerServerStartedState(
-                stateManager: this,
-                gameplayServerContext: new GameplayServerContext(
-                    gameplaySceneManager: gameplaySceneManager,
-                    networkManager: _networkManager,
-                    transport: _transport,
-                    targetNumberOfPlayers: _targetNumberOfPlayers,
-                    connectedPlayerDataDict: _connectedPlayerDataDict,
-                    playerPrefab: _playerPrefab,
-                    playerPositionTransforms: _playerPositionTransforms
-                )
+        GameplayServerStates gameplayServerStates = new();
+        SetState(
+            state: gameplayServerStates.GameplayServerServerStartedState,
+            context: new GameplayServerContext(
+                gameplayServerStates: gameplayServerStates,
+                gameplaySceneManager: gameplaySceneManager,
+                networkManager: _networkManager,
+                transport: _transport,
+                targetNumberOfPlayers: _targetNumberOfPlayers,
+                connectedPlayerDataDict: _connectedPlayerDataDict,
+                playerPrefab: _playerPrefab,
+                playerPositionTransforms: _playerPositionTransforms
             )
         );
     }

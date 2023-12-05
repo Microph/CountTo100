@@ -66,10 +66,11 @@ public class GameplayClientStateManager : StateManager<GameplayClientContext>
         _networkManager.StartClient();
         await TaskHelper.When(() => _networkManager.IsConnectedClient && IsPlayerObjectSpawned(_networkManager.LocalClient.PlayerObject));
         Debug.Log("Client is connected and player object is spawned!");
+        GameplayClientStates gameplayClientStates = new();
         SetState(
-            state: new GameplayClientClientStartedState(),
+            state: gameplayClientStates.GameplayClientClientStartedState,
             context: new GameplayClientContext(
-                    gameplayClientStates: new GameplayClientStates(),
+                    gameplayClientStates: gameplayClientStates,
                     gameplaySceneManager: gameplaySceneManager,
                     networkManager: _networkManager,
                     transport: _transport,

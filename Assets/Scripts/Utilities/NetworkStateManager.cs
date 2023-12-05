@@ -3,16 +3,16 @@ using UnityEngine;
 
 namespace CountTo100.Utilities
 {
-    public abstract class NetworkStateManager : NetworkBehaviour, IStateManageable
+    public abstract class NetworkStateManager<T> : NetworkBehaviour, IStateManageable<T>
     {
         public NetworkVariable<Enums.State> NVCurrentStateEnum = new NetworkVariable<Enums.State>(k_defaultState);
         public Enums.State CurrentStateEnum => _currentState.StateEnum;
 
         private const Enums.State k_defaultState = Enums.State.None;
 
-        private State _currentState = null;
+        private State<T> _currentState = null;
 
-        public virtual void SetState(State state)
+        public virtual void SetState(State<T> state, T context)
         {
             if (!IsSpawned)
             {
@@ -20,11 +20,12 @@ namespace CountTo100.Utilities
                 return;
             }
             _currentState = state;
+            _currentState.Initialize(this, context);
             NVCurrentStateEnum.Value = CurrentStateEnum;
             _currentState.OnEnter();
         }
 
-        public virtual void TransitTo(State newState)
+        public virtual void TransitTo(State<T> newState, T context)
         {
             if (!IsSpawned)
             {
@@ -39,7 +40,7 @@ namespace CountTo100.Utilities
 
             _currentState.OnExit();
             _currentState.AvailableStateTransitions[(CurrentStateEnum, newState.StateEnum)].OnTransit();
-            SetState(newState);
+            SetState(newState, context);
         }
 
         protected virtual void Update()

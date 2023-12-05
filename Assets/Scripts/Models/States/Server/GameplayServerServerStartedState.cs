@@ -3,24 +3,18 @@ using Unity.Netcode;
 using UnityEngine;
 using static GameplayServerStateManager;
 
-public class GameplayServerServerStartedState : State
+public class GameplayServerServerStartedState : State<GameplayServerContext>
 {
-    private GameplayServerContext _gameplayServerContext;
-
-    public GameplayServerServerStartedState(
-        IStateManageable stateManager,
-        GameplayServerContext gameplayServerContext
-    )
+    public GameplayServerServerStartedState()
         : base(
             stateEnum: Enums.State.GameplayServer_ServerStarted,
-            stateManager: stateManager,
             availableStateTransitions: new StateTransition[]
             {
                 new BeginGameplayCountDownStateTransition()
-            }
+            },
+            stateManager: null
         )
     {
-        _gameplayServerContext = gameplayServerContext;
     }
 
     public class BeginGameplayCountDownStateTransition : StateTransition
@@ -33,34 +27,34 @@ public class GameplayServerServerStartedState : State
 
     public override void OnEnter()
     {
-        _gameplayServerContext.NetworkManager.OnClientConnectedCallback += OnClientConnected;
-        _gameplayServerContext.NetworkManager.OnClientDisconnectCallback += OnClientDisconnected;
-        _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.OnPlayerReady += OnPlayerReady;
-        string serverAddress = string.IsNullOrEmpty(_gameplayServerContext.Transport.ConnectionData.Address) ? "localhost" : _gameplayServerContext.Transport.ConnectionData.Address;
-        _gameplayServerContext.GameplaySceneManager.GameplayUIManager.ShowServerInfo($"Number of players: {GlobalServerConfig.LocalServerAllocationPayload.numberOfPlayers}\nBinding IP: {serverAddress}\nPort: {_gameplayServerContext.Transport.ConnectionData.Port}");
+        _context.NetworkManager.OnClientConnectedCallback += OnClientConnected;
+        _context.NetworkManager.OnClientDisconnectCallback += OnClientDisconnected;
+        _context.GameplaySceneManager.GameplayServerStateManager.OnPlayerReady += OnPlayerReady;
+        string serverAddress = string.IsNullOrEmpty(_context.Transport.ConnectionData.Address) ? "localhost" : _context.Transport.ConnectionData.Address;
+        _context.GameplaySceneManager.GameplayUIManager.ShowServerInfo($"Number of players: {GlobalServerConfig.LocalServerAllocationPayload.numberOfPlayers}\nBinding IP: {serverAddress}\nPort: {_context.Transport.ConnectionData.Port}");
     }
 
     public override void OnExit()
     {
-        _gameplayServerContext.NetworkManager.OnClientConnectedCallback -= OnClientConnected;
-        _gameplayServerContext.NetworkManager.OnClientDisconnectCallback -= OnClientDisconnected;
-        _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager.OnPlayerReady -= OnPlayerReady;
+        _context.NetworkManager.OnClientConnectedCallback -= OnClientConnected;
+        _context.NetworkManager.OnClientDisconnectCallback -= OnClientDisconnected;
+        _context.GameplaySceneManager.GameplayServerStateManager.OnPlayerReady -= OnPlayerReady;
     }
 
     private void OnClientConnected(ulong clientId)
     {
         SpawnPlayer(
-            gameplayServerStateManager: _gameplayServerContext.GameplaySceneManager.GameplayServerStateManager,
+            gameplayServerStateManager: _context.GameplaySceneManager.GameplayServerStateManager,
             clientId: clientId,
-            playerName: _gameplayServerContext.ConnectedPlayerDataDict[clientId].PlayerName,
-            playerColor: _gameplayServerContext.ConnectedPlayerDataDict[clientId].PlayerColor,
-            position: _gameplayServerContext.PlayerPositionTransforms[_gameplayServerContext.ConnectedPlayerDataDict.Count - 1].position
+            playerName: _context.ConnectedPlayerDataDict[clientId].PlayerName,
+            playerColor: _context.ConnectedPlayerDataDict[clientId].PlayerColor,
+            position: _context.PlayerPositionTransforms[_context.ConnectedPlayerDataDict.Count - 1].position
         );
     }
 
     private void OnClientDisconnected(ulong clientId)
     {
-        _gameplayServerContext.ConnectedPlayerDataDict.Remove(clientId);
+        _context.ConnectedPlayerDataDict.Remove(clientId);
     }
 
     private void SpawnPlayer(
@@ -71,7 +65,7 @@ public class GameplayServerServerStartedState : State
         Vector3 position
     )
     {
-        PlayerObject newPlayer = Object.Instantiate(original: _gameplayServerContext.PlayerPrefab, position: position, rotation: Quaternion.identity);
+        PlayerObject newPlayer = Object.Instantiate(original: _context.PlayerPrefab, position: position, rotation: Quaternion.identity);
         newPlayer.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
         newPlayer.Setup(
             gameplayServerStateManager: gameplayServerStateManager, 
@@ -79,15 +73,15 @@ public class GameplayServerServerStartedState : State
             playerName: playerName,
             playerColor: playerColor
         );
-        _gameplayServerContext.ConnectedPlayerDataDict[clientId].PlayerObject = newPlayer;
+        _context.ConnectedPlayerDataDict[clientId].PlayerObject = newPlayer;
     }
 
     private void OnPlayerReady(int readyPlayers)
     {
         Debug.Log($"readyPlayers: {readyPlayers}");
-        if (readyPlayers == _gameplayServerContext.TargetNumberOfPlayers)
+        if (readyPlayers == _context.TargetNumberOfPlayers)
         {
-            _stateManager.TransitTo(new GameplayServerBeginGameplayCountDownState(_stateManager, _gameplayServerContext));
+            _stateManager.TransitTo(_context.GameplayServerStates.GameplayServerBeginGameplayCountDownState, _context);
         }
     }
 }
