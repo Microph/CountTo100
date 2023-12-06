@@ -10,11 +10,10 @@ namespace CountTo100.Utilities
         protected IStateManageable<T> _stateManager;
         protected T _context;
 
-        protected State(Enums.State stateEnum, IEnumerable<StateTransition> availableStateTransitions, IStateManageable<T> stateManager)
+        protected State(Enums.State stateEnum, IEnumerable<StateTransition> availableStateTransitions)
         {
             StateEnum = stateEnum;
             AvailableStateTransitions = new Dictionary<(Enums.State, Enums.State), StateTransition>();
-            _stateManager = stateManager;
             foreach (var transition in availableStateTransitions)
             {
                 AvailableStateTransitions.Add((transition.FromState, transition.ToState), transition);

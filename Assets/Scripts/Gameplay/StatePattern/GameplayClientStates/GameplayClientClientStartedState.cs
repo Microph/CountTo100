@@ -9,8 +9,7 @@ public class GameplayClientClientStartedState : State<GameplayClientContext>
             availableStateTransitions: new StateTransition[]
             {
                 new BeginGameplayCountDownStateTransition()
-            },
-            stateManager: null
+            }
         )
     {
     }

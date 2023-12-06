@@ -14,8 +14,7 @@ public class GameplayServerBeginGameplayCountDownState : State<GameplayServerCon
             availableStateTransitions: new StateTransition[]
             {
                 new AllowCountingStateTransition()
-            },
-            stateManager: null
+            }
         )
     {
     }

@@ -8,8 +8,7 @@ public class GameplayServerEndGameState : State<GameplayServerContext>
             stateEnum: Enums.State.GameplayServer_EndGame,
             availableStateTransitions: new StateTransition[]
             {
-            },
-            stateManager: null
+            }
         )
     {
     }

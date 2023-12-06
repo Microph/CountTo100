@@ -13,8 +13,7 @@ public class GameplayClientAllowCountingState : State<GameplayClientContext>
             availableStateTransitions: new StateTransition[]
             {
                 new EndGameStateTransition()
-            },
-            stateManager: null
+            }
         )
     {
     }

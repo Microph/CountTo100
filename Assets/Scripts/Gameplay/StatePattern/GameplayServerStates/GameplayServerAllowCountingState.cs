@@ -10,8 +10,7 @@ public class GameplayServerAllowCountingState : State<GameplayServerContext>
             availableStateTransitions: new StateTransition[]
             {
                 new EndGameStateTransition()
-            },
-            stateManager: null
+            }
         )
     {
     }

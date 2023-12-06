@@ -9,8 +9,7 @@ public class GameplayClientEndGameState : State<GameplayClientContext>
             stateEnum: Enums.State.GameplayClient_EndGame,
             availableStateTransitions: new StateTransition[]
             {
-            },
-            stateManager: null
+            }
         )
     {
     }
